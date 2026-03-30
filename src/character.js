@@ -1,6 +1,6 @@
 import { checkCollision } from "./collisionCheck.js";
 import { gameRunning } from "./main.js";
-import { drawBg , drawGround } from "./sceneCreation.js";
+import { drawBg , drawGround , drawPipes , drawScore , updateGround , updatePipes } from "./sceneCreation.js";
 
 export const flappyBirdSpriteSheet = new Image()
 flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png'
@@ -9,7 +9,7 @@ const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d');
 
 export const dpr = devicePixelRatio || 1;
-export const scale = 2;
+export const scale = 2.5;
 
 export let width = window.innerWidth < 768 ? window.innerWidth : window.innerWidth * 0.33;
 export let height = window.innerHeight;
@@ -23,7 +23,7 @@ const gravity = 600;
 
 export let player = {
     x: 50,
-    y: 60,
+    y: 0,
     velocity_y: 0,
     h: 12,
     w : 17,
@@ -87,19 +87,28 @@ export function animateCharacter() {
 }
 
 export function gameLoop(currentTime) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, width / scale , height / scale);
+
+    let delta = (currentTime - lastTime) / 1000;
+    if (delta > 0.1) { delta = 0.1 }
+
+    lastTime = currentTime ;
+
+    updatePipes(delta);
+
+    updateGround(delta);
+
     drawBg()
+
+    drawPipes();
+
+    drawScore()
 
     drawGround()
 
     animateCharacter();
 
     checkCollision(player)
-
-    let delta = (currentTime - lastTime) / 1000;
-    if (delta > 0.1) { delta = 0.1 }
-
-    lastTime = currentTime
 
     player.velocity_y += gravity * delta;
     player.y += player.velocity_y * delta;
