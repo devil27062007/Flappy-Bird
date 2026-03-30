@@ -19,7 +19,7 @@ const container = document.getElementById('game_container');
 
 let lastTime = 0;
 
-const gravity = 600;
+const gravity = 500;
 
 export let player = {
     x: 50,
@@ -60,7 +60,7 @@ export const characterAnimation = {
 
 export function animateCharacter() {
     let sprite;
-    if (player.velocity_y < 0) {
+    if (player.velocity_y < -50) {
         sprite = characterAnimation['up'];
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -68,7 +68,7 @@ export function animateCharacter() {
             player.x, player.y, sprite.w , sprite.h 
         );
     }
-    else if (player.velocity_y > 0) {
+    else if (player.velocity_y > 50) {
         sprite = characterAnimation['mid'];
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -76,7 +76,7 @@ export function animateCharacter() {
             player.x, player.y, sprite.w, sprite.h
         );
     }
-    else if (player.velocity_y == 0) {
+    else{
         sprite = characterAnimation['down'];
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -98,20 +98,33 @@ export function gameLoop(currentTime) {
 
     updateGround(delta);
 
-    drawBg()
+    drawBg();
 
     drawPipes();
 
-    drawScore()
+    drawScore();
 
-    drawGround()
+    drawGround();
 
     animateCharacter();
 
-    checkCollision(player)
+    const collided = checkCollision(player) ;
+
+    const groundY = height / scale - 50 ;
 
     player.velocity_y += gravity * delta;
     player.y += player.velocity_y * delta;
+
+    if(player.y + player.h >= groundY ){
+        player.y = groundY - player.h ;
+        player.velocity_y = 0 ;
+    }
+
+    if(player.y < 0){
+        player.y = 0 ;
+        player.velocity_y_y = 0 ;
+    }
+
 
     requestAnimationFrame(gameLoop);
 }
@@ -121,7 +134,7 @@ flappyBirdSpriteSheet.onload = () => {
 }
 
 canvas.addEventListener('click', () => {
-    player.velocity_y = -200;
+    player.velocity_y = -150;
 })
 
 

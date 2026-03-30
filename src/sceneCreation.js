@@ -7,12 +7,12 @@ const ctx = canvas.getContext('2d')
 const bg = { x: 0, y: 0, w: 144, h: 256 };
 const ground = { x: 146, y: 0, w: 154, h: 56 }
 
-const pipeSprite = {
+export const pipeSprite = {
     upward : { x:330 , y : 0 , w : 26 , h : 121 } ,
     downward : { x : 302 , y : 0 , w : 26 , h : 135 }
 }
 
-const scoreSprite = {
+export const scoreSprite = {
     '0' : { x: 288 , y : 100 , w : 7 , h:10} ,
     '1' : { x: 291  , y : 118 , w: 5 , h:10} ,
     '2' : { x: 289 , y : 134 , w : 7 , h : 10} ,
@@ -32,7 +32,7 @@ export let pipes = [] ;
 let pipeTimer = 0 ;
 const pipeInterval = 2 ;
 const pipeSpeed = 100 ;
-const pipeGap = 60 ;
+export const pipeGap = 60 ;
 
 export function drawBg() {
 
@@ -135,6 +135,7 @@ export function drawScore(){
             currentX , 10 , num.w , num.h
         );
 
+        currentX += num.w + 2 ;
     }
 }
 
