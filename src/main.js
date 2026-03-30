@@ -1,10 +1,9 @@
-import { flappyBirdSpriteSheet , gameLoop } from "./character"
+import { flappyBirdSpriteSheet , gameLoop } from "./character.js"
 
-export let gameRunning = true
+export let gameRunning = true;
 
-document.getElementById('game_container').addEventListener('click' , () =>{
-    gameRunning = true
-
-    if(gameRunning)
-        gameLoop();
-})
+//document.getElementById('main_canvas').addEventListener('click' , () =>{
+//    gameRunning = true
+//   if(gameRunning)
+//        gameLoop();
+//})
