@@ -1,5 +1,6 @@
-import { dpr, flappyBirdSpriteSheet, height, player, scale, width } from "./character.js";
+import { dpr ,height, player, scale, width } from "./character.js";
 import { addPoint , getScore } from "./score.js";
+import { flappyBirdSpriteSheet } from "./main.js";
 
 const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d')
@@ -12,7 +13,7 @@ export const pipeSprite = {
     downward : { x : 302 , y : 0 , w : 26 , h : 135 }
 }
 
-export const scoreSprite = {
+const scoreSprite = {
     '0' : { x: 288 , y : 100 , w : 7 , h:10} ,
     '1' : { x: 291  , y : 118 , w: 5 , h:10} ,
     '2' : { x: 289 , y : 134 , w : 7 , h : 10} ,

@@ -1,9 +1,6 @@
 import { checkCollision } from "./collisionCheck.js";
-import { gameRunning } from "./main.js";
+import { flappyBirdSpriteSheet ,gameRunning} from "./main.js";
 import { drawBg , drawGround , drawPipes , drawScore , updateGround , updatePipes } from "./sceneCreation.js";
-
-export const flappyBirdSpriteSheet = new Image()
-flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png'
 
 const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d');
