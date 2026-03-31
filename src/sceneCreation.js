@@ -1,5 +1,6 @@
 import { dpr ,height, player, scale, width } from "./character.js";
 import { addPoint , getScore } from "./score.js";
+import { rockets } from "./rocket.js";
 import { flappyBirdSpriteSheet } from "./main.js";
 
 const canvas = document.getElementById('main_canvas');
@@ -74,8 +75,8 @@ export function drawGround() {
 export function updatePipes(delta){
     pipeTimer +=delta ;
 
-    if(pipeTimer >= pipeInterval){
-        pipeTimer = 0
+    if(pipeTimer >= pipeInterval && rockets.length === 0){
+        pipeTimer = 0 ;
 
         const groundY = (height / scale ) - 50 ;
 
@@ -141,6 +142,7 @@ export function drawScore(){
         );
 
         currentX += num.w + 2 ;
+
     }
 }
 
@@ -161,4 +163,4 @@ export function drawPipes(){
         )
     })
     
-}
+};

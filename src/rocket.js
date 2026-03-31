@@ -1,4 +1,4 @@
-import { height , scale , width } from "./character.js";
+import { height , player , scale , width } from "./character.js";
 import { blastSprite , rocketSprite } from "./main.js";
 import { getScore } from "./score.js";
 
@@ -8,8 +8,9 @@ const ctx = canvas.getContext("2d");
 const rocketSpawnScore = 1 ;
 let lastRocketScore = -1 ;
 let rocketSpawnCount = 1 ;
+let maxRocketCount = 10 ;
 
-const rocketSpeed = 15 ;
+const rocketSpeed = 45 ;
 
 export let rockets = [];
 
@@ -25,21 +26,59 @@ export function checkRocketSpawn(){
 
 export function spawnRocket(){
     for( let i = 0 ; i < rocketSpawnCount ; i++ ){
-        const minY = 10 ;
-        const maxY = height / scale - 75 ;
-        
-        const x =width / scale ;
-        const y = minY + Math.random() * (maxY - minY)
 
-        rockets.push(
-            {
-                x: x ,
-                y: y ,
-                w: 31 ,
-                h: 21
-            }
-        )
+        const x =width / scale ;
+        let y ;
+        let attempts = 0 ;
+        let maxAttempts = 100 ;
+
+        do {
+            y = randomY();
+            attempts++;
+        } while(hasOverlay(y) && attempts < maxAttempts );
+
+
+        if(attempts < maxAttempts ){
+            rocket.push(
+                {
+                    x: x ,
+                    y: y ,
+                    w: 31 ,
+                    h: 21 ,
+                    speed : randomSpeed()
+                }
+            )
+        }
     }
+    if(  rocketSpawnCount < maxRocketCount) {
+        rocketSpawnCount += 1;
+    }
+}
+
+export function randomSpeed(){
+    const minSpeed = 40 ;
+    const maxSpeed = 70 ;
+
+    return minSpeed + Math.random() *(maxSpeed - minSpeed );
+}
+
+export function hasOverlay(y){
+    const playerHeight = player.h ;
+    const jumpHeight = 20 ;
+    const buffer = 10 ;
+
+    const minGap = playerHeight + jumpHeight + buffer ;
+
+    return rockets.some(rocket => {
+        return Math.abs(y - rocket.y) < (21 + minGap)
+    })
+}
+
+export function randomY(){
+    const minY = 10 ;
+    const maxY = height / scale - 75 ;
+
+    return minY + Math.random() * (maxY - minY);
 }
 
 export function updateRocket(delta){
@@ -81,5 +120,6 @@ export function drawBlast(rocket){
 
 export function resetRocketSpawn(){
     lastRocketScore = -1 ;
+    rocketSpawnCount = 1 ;
     rockets = [];
 }

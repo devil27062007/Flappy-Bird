@@ -1,9 +1,8 @@
 import { checkCollision } from "./collisionCheck.js";
 import { flappyBirdSpriteSheet, gameRunning, gameOver, gameover } from "./main.js";
 import { showPauseModal } from "./pause.js";
-import { checkRocketSpawn , drawRocket , spawnRocket , updateRocket} from "./rocket.js";
-import { drawBg, drawGround, drawPipes, drawScore, updateGround, updatePipes } from "./sceneCreation.js";
-
+import { checkRocketSpawn , drawRocket ,rockets, spawnRocket , updateRocket} from "./rocket.js";
+import { drawBg, drawGround, drawPipes, drawScore, resetPipes,updateGround, updatePipes } from "./sceneCreation.js";
 
 const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d');
@@ -15,7 +14,6 @@ export let width = window.innerWidth < 768 ? window.innerWidth : window.innerWid
 export let height = window.innerHeight;
 
 const container = document.getElementById('game_container');
-
 
 let lastTime = 0;
 let animationId = null;
@@ -73,12 +71,12 @@ export function resetPlayer(){
     player.velocity_y = 0;
 }
 
-export function setCollidedRocket(rocket){
+export function setCollidedRocket(rocket) {
     collidedRocket = rocket ;
 }
 
-export function resetCollidedRocket(rocket){
-    collidedRocket = null ;
+export function resetCollidedRocket(rocket) {
+    collidedRocket = rocket ;
 }
 
 function animateCharacter() {
@@ -121,33 +119,34 @@ export function gameLoop(currentTime) {
 
     lastTime = currentTime;
 
-    drawBg();
-    drawPipes();
-    drawGround();
+    drawBg() ;
+    drawPipes() ;
 
-    animateCharacter();
+    drawGround() ;
+
+    animateCharacter() ;
 
     if (!gameover) {
-        drawScore();
-        showPauseModal();
+        drawScore() ;
+        showPauseModal() ;
     }
 
-    if(collidedRocket){
-        drawRocket(collidedRocket);
+    if (collidedRocket) {
+        drawRocket(collidedRocket) ;
     }
 
     if (gameRunning) {
-        updatePipes(delta);
-        updateGround(delta);
-        updateRocket(delta);
+        updatePipes(delta) ;
+        updateGround(delta) ;
+        updateRocket(delta) ;
 
-        const rocket = checkRocketSpawn();
+        const rocket = checkRocketSpawn() ;
 
-        if(rocket){
-            spawnRocket();
+        if(rocket) {
+            spawnRocket() ;
         }
-        
-        const groundY = height / scale - 50;
+
+        const groundY = height / scale - 50 ;
 
         player.velocity_y += gravity * delta;
         player.y += player.velocity_y * delta;
