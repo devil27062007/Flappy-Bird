@@ -12,6 +12,8 @@ let scrollOffset = 0;
 const itemHeight = 30;
 const shopContentHeight = 98 - 25;
 
+const buyButtonLoc = {}
+
 const currencySprite = {
     '0': { x: 287, y: 74, w: 6, h: 7 },
     '1': { x: 291, y: 162, w: 3, h: 7 },
@@ -42,7 +44,7 @@ const items = {
         sprite: { x: 433, y: 102, w: 22, h: 22 },
         title: "Shield",
         price: 10,
-        descp: "You can take one hit ans still alive",
+        descp: "You can take one hit and still alive",
     },
     Rocket: {
         sprite: { x: 408, y: 144, w: 22, h: 22 },
@@ -56,6 +58,31 @@ const items = {
         price: 10,
         descp: "Makes you Invisible for 5s"
     },
+}
+
+export function storeBoughtItemsInLocalStorage() {
+    for (let item in boughtItems) {
+        const quantity = boughtItems[item];
+        localStorage.setItem(item, quantity);
+    }
+};
+
+export function setBoughtItemsFromLocalToCode() {
+    for (let item in items) {
+        if (localStorage.getItem(item)) {
+            boughtItems[item] = parseInt(localStorage.getItem(item));
+        }
+    }
+}
+
+export function deductBoughtItems(item) {
+    boughtItems[item]--;
+    storeBoughtItemsInLocalStorage();
+}
+
+export function creditBoughtItems(item) {
+    boughtItems[item]++;
+    storeBoughtItemsInLocalStorage();
 }
 
 export function drawShowButton() {
@@ -187,47 +214,63 @@ export function drawShopPage() {
 
         ctx.font = "5px 'Pixelify Sans'";
 
-        const lines = getWrappedLines(powerUp.descp , 70);
+        const lines = getWrappedLines(powerUp.descp, 70);
 
-        const extraHeight = Math.max(0,(lines.length - 1)* lineHeight);
+        const extraHeight = Math.max(0, (lines.length - 1) * lineHeight);
 
 
         ctx.drawImage(
-            flappyBirdSpriteSheet ,
-            powerUp.sprite.x , powerUp.sprite.y , powerUp.sprite.w , powerUp.sprite.h ,
-            shopX + 5 , currentY + 4 , 18 , 18
+            flappyBirdSpriteSheet,
+            powerUp.sprite.x, powerUp.sprite.y, powerUp.sprite.w, powerUp.sprite.h,
+            shopX + 5, currentY + 4, 18, 18
         );
 
-        ctx.imageSmoothingEnabled = false ;
+        //quantity
+        ctx.drawImage(
+            flappyBirdSpriteSheet,
+            474, 141, 5, 6,
+            shopX + 6, currentY + 5.5 + 18, 3, 4
+        );
+
+        //quantity
+        if (boughtItems[powerUpName]) {
+            drawPriceFont(boughtItems[powerUpName].toString(), shopX + 10 + 18, 0.6);
+        } else {
+            drawPriceFont("0", shopX + 10, currentY + 5.2 + 18, 0.6);
+        }
+
+        ctx.imageSmoothingEnabled = false;
 
         ctx.font = " 8px 'Pixelify Sans'";
         ctx.fillStyle = 'black';
-        ctx.fillText(powerUpName , shopX + 30, currentY + 5);
+        ctx.fillText(powerUpName, shopX + 30, currentY + 5);
 
         ctx.font = "5px 'Pixelify Sans'";
         ctx.fillStyle = 'grey';
 
-        for( let i = 0 ; i < lines.length ; i++){
-            ctx.fillText(lines[i], shopX+30 , currentY + 12 + (i * lineHeight) );
+        for (let i = 0; i < lines.length; i++) {
+            ctx.fillText(lines[i], shopX + 30, currentY + 12 + (i * lineHeight));
         }
 
-        const buttonY = currentY + 17 + extraHeight ;
+        const buttonY = currentY + 17 + extraHeight;
 
-        const rightXForCoin = drawPriceFont(powerUp.price.toString(),shopX + 30 ,buttonY);
+        const rightXForCoin = drawPriceFont(powerUp.price.toString(), shopX + 30, buttonY);
 
         //coin
         ctx.drawImage(
-            flappyBirdSpriteSheet ,
-            242 , 229 , 22 , 22 ,
-            rightXForCoin + 1 , buttonY - 1.5 , 8 , 8
+            flappyBirdSpriteSheet,
+            242, 229, 22, 22,
+            rightXForCoin + 1, buttonY - 1.5, 8, 8
         );
 
         //buy button
         ctx.drawImage(
-            flappyBirdSpriteSheet ,
-            345 , 133, 40, 14,
-            shopX + 113 - 40 * 0.6 - 7 , buttonY - 2 , 40 * 0.6 , 14 * 0.6 
+            flappyBirdSpriteSheet,
+            345, 133, 40, 14,
+            shopX + 113 - 40 * 0.6 - 7, buttonY - 2, 40 * 0.6, 14 * 0.6
         );
+
+        buyButtonLoc[powerUpName] = { x: shopX + 113 - 40 * 0.6 - 7, y: buttonY - 2, w: 40 * 0.6, h: 14 * 0.6 };
 
         currentY += (baseHeight + extraHeight);
     }
@@ -282,28 +325,64 @@ export function drawCurrency() {
 
 };
 
-export function isClickOnBuyButton(mouseX , mouseY){
+export function isClickOnBuyButton(mouseX, mouseY) {
 
+    const shopX = (width / scale / 2) - (113 / 2);
+    const shopY = (height / scale / 2) - (98 / 2);
+
+    const clipLeft = shopX + 2;
+    const clipRight = shopX + 2 + (113 - 4);
+
+    const clipTop = shopY + 20;
+    const clipBottom = shopY + 20 + shopContentHeight;
+
+    if (mouseX < clipLeft || mouseX > clipRight || mouseY < clipTop || mouseY > clipBottom) {
+        return false;
+    }
+
+    for (let buyButton in buyButtonLoc){
+        const button = buyButtonLoc[buyButton];
+
+        const check = (
+            mouseX >= button.x && 
+            mouseX <= button.x + button.w &&
+            mouseY >= button.y &&
+            mouseY <= button.y + button.h
+        )
+        if(check){
+            if(boughtItems[buyButton]){
+                creditBoughtItems(buyButton);
+                deductCurrency(items[buyButton].price);
+            }else{
+                boughtItems[buyButton] = 1 ;
+                deductCurrency(items[buyButton].price);
+                storeBoughtItemsInLocalStorage();
+            }
+            console.log(boughtItems);
+            return true;
+        }
+    }
+    return true;
 }
 
-canvas.addEventListener("wheel" , (e) =>{
-    if(!isShowShopPage) return ;
+canvas.addEventListener("wheel", (e) => {
+    if (!isShowShopPage) return;
 
     e.preventDefault();
 
-    const scrollSpeed = 5 ;
+    const scrollSpeed = 5;
 
-    if(e.deltaY > 0) {
-        scrollOffset -= scrollSpeed ;
-    } else{
-        scrollOffset += scrollSpeed ;
+    if (e.deltaY > 0) {
+        scrollOffset -= scrollSpeed;
+    } else {
+        scrollOffset += scrollSpeed;
     }
 
-    if(scrollOffset > 0) scrollOffset = 0;
+    if (scrollOffset > 0) scrollOffset = 0;
 
     const totalContentHeight = getDynamicTotalContentHeight();
 
     const maxScroll = -(totalContentHeight - shopContentHeight);
 
-    if(scrollOffset < maxScroll) scrollOffset = maxScroll ;
-} , {passive : false });
+    if (scrollOffset < maxScroll) scrollOffset = maxScroll;
+}, { passive: false });
