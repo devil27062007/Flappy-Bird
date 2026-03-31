@@ -35,26 +35,26 @@ export function drawRetryPage(){
     drawMedal();
 };
 
-export function drawScore(){
-    let number = getScore().toString() ;
-    let totalWidth =0 ;
-    for ( let i = 0 ; i < number.length ; i++){
-        totalWidth +=scoreSprite[number[i]].w + 1 ;
-    };
-    totalWidth -= 1;
-    let startX = (width/scale/2)-(113/2) - totalWidth / 2 + (92);
-    let currentX = startX ;
-    for(let i = 0 ; i < number.length ; i++ ){
-        let num = scoreSprite[number[i]];
+// export function drawScore(){
+//     let number = getScore().toString() ;
+//     let totalWidth =0 ;
+//     for ( let i = 0 ; i < number.length ; i++){
+//         totalWidth +=scoreSprite[number[i]].w + 1 ;
+//     };
+//     totalWidth -= 1;
+//     let startX = (width/scale/2)-(113/2) - totalWidth / 2 + (92);
+//     let currentX = startX ;
+//     for(let i = 0 ; i < number.length ; i++ ){
+//         let num = scoreSprite[number[i]];
 
-        ctx.drawImage(
-            flappyBirdSpriteSheet ,
-            num.x , num.y , num.w , num.h ,
-            currentX , (height / scale / 2 ) - (58 / 2) +(18) , num.w , num.h
-        )
-        currentX += num.w + 1 ;
-    }
-}
+//         ctx.drawImage(
+//             flappyBirdSpriteSheet ,
+//             num.x , num.y , num.w , num.h ,
+//             currentX , (height / scale / 2 ) - (58 / 2) +(18) , num.w , num.h
+//         )
+//         currentX += num.w + 1 ;
+//     }
+// }
 
 export function drawBestScore(){
     const score = localStorage.getItem("best");
