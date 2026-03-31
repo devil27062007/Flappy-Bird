@@ -21,6 +21,13 @@ let animationId = null;
 
 const gravity = 500;
 
+export function stopGameAnimation(){
+    if(animationId){
+        cancelAnimationFrame(animationId) ;
+        animationId  = null ;
+    }
+}
+
 export function resizeCanvas() {
 
     width = window.innerWidth < 768 ? window.innerWidth : window.innerWidth * 0.33;
@@ -56,6 +63,12 @@ export const characterAnimation = {
     up: { x: 264, y: 64, w: 17, h: 12 },
     mid: { x: 264, y: 90, w: 17, h: 12 },
     down: { x: 223, y: 124, w: 17, h: 12 },
+}
+
+export function resetPlayer(){
+    player.x = (width / scale / 2 ) - 8;
+    player.y = 95;
+    player.velocity_y = 0;
 }
 
 function animateCharacter() {

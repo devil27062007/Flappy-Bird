@@ -19,10 +19,6 @@ export function showPauseModal() {
     }
 }
 
-export function hidePauseModal(){
-
-}
-
 export function isClickOnPauseButton(mouseX , mouseY){
 
     return(

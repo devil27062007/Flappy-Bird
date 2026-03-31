@@ -5,7 +5,7 @@ import { pipeGap , pipes , pipeSprite } from "./sceneCreation.js"
 const canvas = document.getElementById('main_canvas');
 
 
-export function checkCollision( player , object ){
+export function checkCollision( player){
     const groundY = height / scale - 50 ;
     if(player.y + player.h >= groundY ){
         console.log("ground hit");

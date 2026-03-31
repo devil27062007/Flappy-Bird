@@ -35,6 +35,10 @@ const pipeInterval = 2 ;
 const pipeSpeed = 100 ;
 export const pipeGap = 60 ;
 
+export function resetPipes(){
+    pipes = [] ;
+}
+
 export function drawBg() {
 
     ctx.drawImage(

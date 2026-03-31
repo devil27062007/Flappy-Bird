@@ -1,15 +1,18 @@
-import { gameLoop , player , scale , width } from "./character.js";
+import { gameLoop , player , scale , width , resetPlayer , stopGameAnimation} from "./character.js";
 import { hidePauseModal , isClickOnPauseButton } from "./pause.js";
-import { drawRetryPage } from "./retryPage.js" ;
-import { drawBg , drawGround , updateGround } from "./sceneCreation.js";
-import { getScore } from "./score.js";
+import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
+import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js";
+import { getScore , resetScore } from "./score.js";
 
 export const flappyBirdSpriteSheet = new Image();
 flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png';
 
+export let firstTapped = false;
+
 export let gameRunning = false;
 export let gameover = false  ;
 let startScreenAnimationId = null;
+let firstTapAnimationId = null ;
 
 const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d');
@@ -63,6 +66,50 @@ export function drawStartButton(){
     );
 }
 
+export function stopStartScreen(){
+    if(startScreenAnimationId){
+        cancelAnimationFrame(startScreenAnimationId);
+        startScreenAnimationId = null ;
+    }
+}
+
+export function stopFirstTapAnimation(){
+    if(firstTapAnimationId){
+        cancelAnimationFrame(firstTapAnimationId);
+        firstTapAnimationId = null ;
+    }
+}
+
+export function toggleScene(game_running){
+    if(game_running && !firstTapped){
+        stopStartScreen();
+        firstTapAnimationId = requestAnimationFrame(startGameLoopWaitingForFirstTap);
+    }
+    else if(game_running){
+        stopStartScreen();
+        stopFirstTapAnimation();
+        requestAnimationFrame(gameLoop);
+    }else{
+        lastTime = performance.now();
+        stopGameAnimation();
+        resetPlayer();
+        resetScore();
+        resetPipes();
+        startScreenAnimationId = requestAnimationFrame(startGameLoop);
+    }
+}
+
+export function gameOver(){
+    gameRunning = false;
+    gameover = true;
+    const currentScore = getScore();
+    const savedBest = localStorage.getItem("best");
+    const bestScore = savedBest ? Math.max(currentScore , parseInt(savedBest)) : currentScore;
+
+    localStorage.setItem("best" , bestScore.toString());
+    drawRetryPage();
+}
+
 export function startGameLoop(currentTime){
     let delta = (currentTime - lastTime) / 1000;
     if(delta>0.1){
@@ -82,21 +129,44 @@ export function startGameLoop(currentTime){
 
     startScreenAnimationId = requestAnimationFrame(startGameLoop)
 }
-export function stopStartScreen(){
-    if(startScreenAnimationId){
-        cancelAnimationFrame(startScreenAnimationId);
-        startScreenAnimationId = null;
-    }
-}
 
-export function toggleScene(game_running){
-    if(game_running){
-        stopStartScreen();
-        requestAnimationFrame(gameLoop);
-    }else{
-        lastTime = performance.now();
-        requestAnimationFrame(startGameLoop);
-    }
+
+export function startGameLoopWaitingForFirstTap(currentTime){
+    let delta = (currentTime = lastTime) / 1000 ;
+    if (delta > 0.1) delta = 0.1 ;
+    lastTime = currentTime;
+
+    drawBg();
+    drawGround();
+
+    animateFlappyOnStartPage(delta);
+    updateGround(delta);
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        146 , 221 , 87 , 22,
+        (width / scale / 2) - 40 , 50 , 87 , 22
+    );
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        172 , 122 , 19 , 16 ,
+        (width / scale / 2) - 10 , 120 , 19 , 16
+    );
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        179 , 141 , 5 , 6 ,
+        (width / scale / 2 ) - 2.5 , 138 , 5 , 6
+    );
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        176 , 153 , 35 , 18 ,
+        (width / scale / 2) - 5 , 148 , 35 , 18
+    );
+
+    firstTapAnimationId = requestAnimationFrame(startGameLoopWaitingForFirstTap);
 }
 
 toggleScene(gameRunning);
@@ -124,16 +194,6 @@ export function isClickOnStartButton(mouseX , mouseY){
     );
 };
 
-export function gameOver(){
-    gameRunning = false ;
-    gameover = true ;
-    const currentScore = getScore();
-    const savedBest = localStorage.getItem("best");
-    const bestScore = savedBest ? Math.max(currentScore , parseInt(savedBest)) : currentScore ;
-
-    localStorage.setItem("best",bestScore.toString());
-    drawRetryPage();
-}
 
 canvas.addEventListener('click', (e)=>{
     const mousePos = getMouse(e);
@@ -147,7 +207,16 @@ canvas.addEventListener('click', (e)=>{
         toggleScene(gameRunning);
         return;
     }
+    if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning){
+        gameover = false ;
+        toggleScene(gameRunning);
+        return;
+    }
     if(gameRunning){
+        if(!firstTapped){
+            firstTapped = true ;
+            toggleScene(gameRunning)
+        }
         player.velocity_y = -150;
     }
 })

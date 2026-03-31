@@ -29,32 +29,36 @@ export function drawRetryPage(){
         flappyBirdSpriteSheet ,
         146 , 58, 113, 58,
         (width / scale / 2 ) - ( 113 / 2 ) , (height/scale/2)-(58/2),113,58
-    )
+    );
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        146, 199, 94 , 19,
+        (width / scale / 2 ) - ( 40 / 2) , (height / scale / 2) - (14 / 2) + 50 , 40 , 14
+    );
+
     drawScore();
     drawBestScore();
     drawMedal();
+    drawMenuButton();
 };
 
-// export function drawScore(){
-//     let number = getScore().toString() ;
-//     let totalWidth =0 ;
-//     for ( let i = 0 ; i < number.length ; i++){
-//         totalWidth +=scoreSprite[number[i]].w + 1 ;
-//     };
-//     totalWidth -= 1;
-//     let startX = (width/scale/2)-(113/2) - totalWidth / 2 + (92);
-//     let currentX = startX ;
-//     for(let i = 0 ; i < number.length ; i++ ){
-//         let num = scoreSprite[number[i]];
+export function drawMenuButton(){
+    ctx.drawImage(
+        flappyBirdSpriteSheet ,
+        246 , 134 , 40 , 14 ,
+        (width / scale / 2) - (40 / 2) , (height / scale / 2 ) -(14 / 2) + 50, 40 , 14
+    );
+}
 
-//         ctx.drawImage(
-//             flappyBirdSpriteSheet ,
-//             num.x , num.y , num.w , num.h ,
-//             currentX , (height / scale / 2 ) - (58 / 2) +(18) , num.w , num.h
-//         )
-//         currentX += num.w + 1 ;
-//     }
-// }
+export function isClickedOnOkButton(mouseX , mouseY ){
+    return (
+        mouseX >= (width / scale / 2) - (40 / 2) &&
+        mouseX <= (width / scale / 2) - (40 / 2) + 40 &&
+        mouseY >= (height / scale / 2) - (14 / 2) + 50 &&
+        mouseY <= (height / scale / 2) - (14 / 2) + 50 + 14
+    )
+}
 
 export function drawBestScore(){
     const score = localStorage.getItem("best");
