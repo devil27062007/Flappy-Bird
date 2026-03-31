@@ -86,11 +86,13 @@ export function stopFirstTapAnimation(){
 export function toggleScene(game_running){
     if(game_running && !firstTapped){
         stopStartScreen();
+        stopFirstTapAnimation();
         firstTapAnimationId = requestAnimationFrame(startGameLoopWaitingForFirstTap);
     }
     else if(game_running){
         stopStartScreen();
         stopFirstTapAnimation();
+        stopGameAnimation();
         requestAnimationFrame(gameLoop);
     }else{
         lastTime = performance.now();
@@ -99,6 +101,7 @@ export function toggleScene(game_running){
         resetScore();
         resetPipes();
         isGameOverProcessed = false ;
+        firstTapped = false ;
         startScreenAnimationId = requestAnimationFrame(startGameLoop);
     }
 }
@@ -205,6 +208,9 @@ export function isClickOnStartButton(mouseX , mouseY){
         mouseY >= 150 + 14
     );
 };
+
+canvas.tabIndex = 0;
+canvas.focus();
 
 canvas.addEventListener('click', (e)=>{
     const mousePos = getMouse(e);

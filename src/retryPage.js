@@ -101,6 +101,7 @@ export function drawBestScore(){
             num.x , num.y , num.w , num.h ,
             currentX , (height / scale / 2) - (58 / 2) , num.w , num.h
         );
+        currentX +=num.w + 1 ;
     }
     console.log(isBest);
 
