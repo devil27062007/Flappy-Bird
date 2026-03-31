@@ -27,7 +27,7 @@ const currencySprite = {
     '9': { x: 292, y: 213, w: 6, h: 7 },
 }
 
-const items = {
+export const items = {
     Gravity: {
         sprite: { x: 382, y: 102, w: 22, h: 22 },
         title: "Low Gravity",

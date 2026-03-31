@@ -1,6 +1,6 @@
-const slot = [];
+export const slot = [];
 const currentSlotPointer = 0 ;
-const maxSlot = 3 ;
+export const maxSlot = 3 ;
 export function addToSlot(){
 
 }
