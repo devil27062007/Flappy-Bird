@@ -1,6 +1,7 @@
 import { checkCollision } from "./collisionCheck.js";
 import { flappyBirdSpriteSheet, gameRunning, gameOver, gameover } from "./main.js";
 import { showPauseModal } from "./pause.js";
+import { checkRocketSpawn , drawRocket , spawnRocket , updateRocket} from "./rocket.js";
 import { drawBg, drawGround, drawPipes, drawScore, updateGround, updatePipes } from "./sceneCreation.js";
 
 
@@ -18,6 +19,7 @@ const container = document.getElementById('game_container');
 
 let lastTime = 0;
 let animationId = null;
+let collidedRocket = null;
 
 const gravity = 500;
 
@@ -71,6 +73,14 @@ export function resetPlayer(){
     player.velocity_y = 0;
 }
 
+export function setCollidedRocket(rocket){
+    collidedRocket = rocket ;
+}
+
+export function resetCollidedRocket(rocket){
+    collidedRocket = null ;
+}
+
 function animateCharacter() {
     let sprite;
     if (player.velocity_y < -50) {
@@ -122,10 +132,21 @@ export function gameLoop(currentTime) {
         showPauseModal();
     }
 
+    if(collidedRocket){
+        drawRocket(collidedRocket);
+    }
+
     if (gameRunning) {
         updatePipes(delta);
         updateGround(delta);
+        updateRocket(delta);
 
+        const rocket = checkRocketSpawn();
+
+        if(rocket){
+            spawnRocket();
+        }
+        
         const groundY = height / scale - 50;
 
         player.velocity_y += gravity * delta;

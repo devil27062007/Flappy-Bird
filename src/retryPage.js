@@ -103,8 +103,6 @@ export function drawBestScore(){
         );
         currentX +=num.w + 1 ;
     }
-    console.log(isBest);
-
     if(isBest){
         ctx.drawImage(
             flappyBirdSpriteSheet ,

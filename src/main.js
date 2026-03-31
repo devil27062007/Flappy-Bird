@@ -1,12 +1,19 @@
-import { gameLoop , player , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
+import { gameLoop , player,resetCollidedRocket , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
 import { isClickOnPauseButton } from "./pause.js" ;
 import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
+import { resetRocketSpawn} from "./rocket.js";
 import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js" ;
 import { getScore , resetScore } from "./score.js" ;
 import { drawShowButton , isClickOnShopButton } from "./shop.js" ;
 
 export const flappyBirdSpriteSheet = new Image() ;
 flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png' ;
+
+export const rocketSprite = new Image();
+rocketSprite.src = "assets/missile1.png";
+
+export const blastSprite = new Image();
+blastSprite.src = "assets/blast1.png";
 
 export let firstTapped = false ;
 export let isBest = false ;
@@ -32,8 +39,8 @@ const characterAnimation = [
     { x: 264, y:64, w:17, h:12 },
     { x: 264, y:90, w:17, h:12 },
     { x: 223, y:124, w:17, h:12},
-
 ]
+
 function animateFlappyOnStartPage(delta){
     frameTimer += delta ;
     if( frameTimer >= frameDelay ){
@@ -101,6 +108,8 @@ export function toggleScene(game_running){
         resetPlayer();
         resetScore();
         resetPipes();
+        resetRocketSpawn();
+        resetCollidedRocket();
         isGameOverProcessed = false ;
         firstTapped = false ;
         startScreenAnimationId = requestAnimationFrame(startGameLoop);
@@ -226,13 +235,13 @@ canvas.addEventListener('click', (e)=>{
         toggleScene(gameRunning);
         return;
     }
-    if(isClickOnShopButton(mousePos.x , mousePos.y) && !gameRunning){
-        console.log("shop button");
-    }
-    if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning){
-        gameover = false ;
+    if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gamerunning){
+        gameover = false;
         toggleScene(gameRunning);
-        return;
+        return ;
+    }
+    if(isClickOnShopButton(mousePos.x , mousePos.y) && !gameRunning){
+        console.log("shop btn");
     }
     if(gameRunning){
         if(!firstTapped){
