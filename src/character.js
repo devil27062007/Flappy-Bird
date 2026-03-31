@@ -83,27 +83,39 @@ function animateCharacter() {
     let sprite;
     if (player.velocity_y < -50) {
         sprite = characterAnimation['up'];
+        ctx.save();
+        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.rotate(-10 * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            player.x, player.y, sprite.w, sprite.h
+            -sprite.w / 3, -sprite.h / 2, sprite.w, sprite.h
         );
+        ctx.restore();
     }
     else if (player.velocity_y > 50) {
         sprite = characterAnimation['mid'];
+        ctx.save();
+        ctx.translate(player.x , sprite.w /2 , player.y + sprite.h / 2);
+        ctx.rotate(10 * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            player.x, player.y, sprite.w, sprite.h
+            -sprite.w / 2, -sprite.h/2 , sprite.w, sprite.h
         );
+        ctx.restore();
     }
     else {
         sprite = characterAnimation['down'];
+        ctx.save();
+        ctx.translate(player.x + sprite.w / 2 , player.y + sprite.h / 2);
+        ctx.rotate(-10 * Math.PI / 180 );
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            player.x, player.y, sprite.w, sprite.h
+            -sprite.w / 2, -sprite.h / 2, sprite.w, sprite.h
         );
+        ctx.restore();
     }
 }
 

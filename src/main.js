@@ -4,7 +4,7 @@ import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
 import { resetRocketSpawn} from "./rocket.js";
 import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js" ;
 import { getScore , resetScore } from "./score.js" ;
-import { drawShopPage , drawShowButton, isClickOnShopButton , isClickOnShopCloseButton , isShowShopPage , showShopPage , toggleShowPageVisibility } from "./shop.js" ;
+import { drawShopPage,handleShopScroll , drawShowButton, isClickOnShopButton , isClickOnShopCloseButton , isShowShopPage , showShopPage , toggleShowPageVisibility } from "./shop.js" ;
 import { addCurrency } from "./wallet.js";
 
 export const flappyBirdSpriteSheet = new Image() ;
@@ -35,6 +35,9 @@ let frameIndex = 0 ;
 const totalFrames = 3 ;
 let frameTimer = 0 ;
 const frameDelay = 0.1 ;
+let yDirection = 1;
+let y = 95;
+const maxY = 105 ;
 
 const characterAnimation = [
     { x: 264, y:64, w:17, h:12 },
@@ -48,11 +51,19 @@ function animateFlappyOnStartPage(delta){
         frameTimer = 0;
         frameIndex = (frameIndex + 1) % totalFrames ;
     }
+    if(y >= maxY){
+        yDirection -= 1;
+    }else{
+        yDirection +=1;
+    }
+
+    y += yDirection * 0.001 ;
+
     const frame = characterAnimation[frameIndex % totalFrames];
     ctx.drawImage(
         flappyBirdSpriteSheet ,
         146, 173, 56, 22,
-        (width/scale/2) - 8, 95, frame.w, frame.h
+        (width/scale/2) - 8, y, frame.w, frame.h
     );
 }
 
@@ -187,19 +198,19 @@ export function startGameLoopWaitingForFirstTap(currentTime){
     ctx.drawImage(
         flappyBirdSpriteSheet ,
         172 , 122 , 19 , 16 ,
-        (width / scale / 2) - 10 , 120 , 19 , 16
+        (width / scale / 2) - 10 , 130 , 19 , 16
     );
 
     ctx.drawImage(
         flappyBirdSpriteSheet ,
         179 , 141 , 5 , 6 ,
-        (width / scale / 2 ) - 2.5 , 138 , 5 , 6
+        (width / scale / 2 ) - 2.5 , 148 , 5 , 6
     );
 
     ctx.drawImage(
         flappyBirdSpriteSheet ,
         176 , 153 , 35 , 18 ,
-        (width / scale / 2) - 5 , 148 , 35 , 18
+        (width / scale / 2) - 5 , 158 , 35 , 18
     );
 
     firstTapAnimationId = requestAnimationFrame(startGameLoopWaitingForFirstTap);
@@ -265,6 +276,13 @@ canvas.addEventListener('click', (e)=>{
             toggleScene(gameRunning)
         }
         player.velocity_y = -150;
+    }
+})
+
+canvas.addEventListener("wheel",(e)=>{
+    if(isShowShopPage){
+        e.preventDefault();
+        handleShopScroll(e.deltaY);
     }
 })
 
