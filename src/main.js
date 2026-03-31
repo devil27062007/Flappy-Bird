@@ -1,29 +1,30 @@
-import { gameLoop , player , scale , width , resetPlayer , stopGameAnimation} from "./character.js";
-import { isClickOnPauseButton } from "./pause.js";
+import { gameLoop , player , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
+import { isClickOnPauseButton } from "./pause.js" ;
 import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
-import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js";
-import { getScore , resetScore } from "./score.js";
+import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js" ;
+import { getScore , resetScore } from "./score.js" ;
+import { drawShowButton , isClickOnShopButton } from "./shop.js" ;
 
-export const flappyBirdSpriteSheet = new Image();
-flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png';
+export const flappyBirdSpriteSheet = new Image() ;
+flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png' ;
 
-export let firstTapped = false;
+export let firstTapped = false ;
 export let isBest = false ;
-let isGameOverProcessed = false
+let isGameOverProcessed = false ;
 
 
-export let gameRunning = false;
+export let gameRunning = false ;
 export let gameover = false  ;
-let startScreenAnimationId = null;
+let startScreenAnimationId = null ;
 let firstTapAnimationId = null ;
 
-const canvas = document.getElementById('main_canvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('main_canvas') ;
+const ctx = canvas.getContext('2d') ;
 
-let lastTime = 0;
+let lastTime = 0 ;
 
-let frameIndex = 0;
-const totalFrames = 3;
+let frameIndex = 0 ;
+const totalFrames = 3 ;
 let frameTimer = 0 ;
 const frameDelay = 0.1 ;
 
@@ -137,9 +138,10 @@ export function startGameLoop(currentTime){
 
     drawBg();
     drawGround();
-
     drawTitle();
+
     drawStartButton();
+    drawShowButton();
 
     animateFlappyOnStartPage(delta);
 
@@ -223,6 +225,9 @@ canvas.addEventListener('click', (e)=>{
         gameRunning = true;
         toggleScene(gameRunning);
         return;
+    }
+    if(isClickOnShopButton(mousePos.x , mousePos.y) && !gameRunning){
+        console.log("shop button");
     }
     if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning){
         gameover = false ;
