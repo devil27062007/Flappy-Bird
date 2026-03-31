@@ -131,7 +131,11 @@ export function drawShopPage(){
                 ctx.fillText('BUY',shopX + 97 , itemY + 7)
             }
         }
+        index++;
     }
+
+    ctx.restore();
+    
 }
 
 export function isClickOnShopCloseButton(mouseX , mouseY){
