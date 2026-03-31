@@ -1,5 +1,5 @@
 import { gameLoop , player , scale , width , resetPlayer , stopGameAnimation} from "./character.js";
-import { hidePauseModal , isClickOnPauseButton } from "./pause.js";
+import { isClickOnPauseButton } from "./pause.js";
 import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
 import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js";
 import { getScore , resetScore } from "./score.js";
@@ -8,6 +8,9 @@ export const flappyBirdSpriteSheet = new Image();
 flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png';
 
 export let firstTapped = false;
+export let isBest = false ;
+let isGameOverProcessed = false
+
 
 export let gameRunning = false;
 export let gameover = false  ;
@@ -95,6 +98,7 @@ export function toggleScene(game_running){
         resetPlayer();
         resetScore();
         resetPipes();
+        isGameOverProcessed = false ;
         startScreenAnimationId = requestAnimationFrame(startGameLoop);
     }
 }
@@ -102,11 +106,20 @@ export function toggleScene(game_running){
 export function gameOver(){
     gameRunning = false;
     gameover = true;
+
+    if(isGameOverProcessed){
+        drawRetryPage();
+        return;
+    }
     const currentScore = getScore();
     const savedBest = localStorage.getItem("best");
+    const previousBest = savedBest ? parseInt(savedBest) : 0 ;
+
+    isBest = currentScore > previousBest ;
     const bestScore = savedBest ? Math.max(currentScore , parseInt(savedBest)) : currentScore;
 
     localStorage.setItem("best" , bestScore.toString());
+    isGameOverProcessed = true;
     drawRetryPage();
 }
 
@@ -129,7 +142,6 @@ export function startGameLoop(currentTime){
 
     startScreenAnimationId = requestAnimationFrame(startGameLoop)
 }
-
 
 export function startGameLoopWaitingForFirstTap(currentTime){
     let delta = (currentTime = lastTime) / 1000 ;
@@ -194,7 +206,6 @@ export function isClickOnStartButton(mouseX , mouseY){
     );
 };
 
-
 canvas.addEventListener('click', (e)=>{
     const mousePos = getMouse(e);
 
@@ -218,5 +229,15 @@ canvas.addEventListener('click', (e)=>{
             toggleScene(gameRunning)
         }
         player.velocity_y = -150;
+    }
+})
+
+canvas.addEventListener("keydown" , (e) => {
+    if(e.key ===' ' && gameRunning){
+        if(!firstTapped){
+            firstTapped = true ;
+            toggleScene(gameRunning);
+        }
+        player.velocity_y = -150 ;
     }
 })

@@ -1,6 +1,6 @@
 import { height , scale , width } from "./character.js";
-import {flappyBirdSpriteSheet } from "./main.js";
-import { drawScore } from "./sceneCreation.js";
+import {flappyBirdSpriteSheet , isBest } from "./main.js";
+import { getScore } from "./score.js";
 
 const canvas = document.getElementById('main_canvas');
 const ctx = canvas.getContext('2d')
@@ -60,25 +60,55 @@ export function isClickedOnOkButton(mouseX , mouseY ){
     )
 }
 
-export function drawBestScore(){
-    const score = localStorage.getItem("best");
-    if(!score) return ;
-
+export function drawScore(){
+    let number = getScore().toString();
     let totalWidth = 0 ;
     for(let i=0; i< score.length ;i++ ){
-        totalWidth +=scoreSprite[score[i]].w + 1 ;
+        totalWidth +=scoreSprite[number[i]].w + 1 ;
     }
     totalWidth -= 1 ;
     let startX = (width/scale/2) - (113 / 2) - totalWidth / 2 + (92) ;
     let currentX = startX ;
-
-    for(let i =0 ; i< score.length ; i++){
-        let num = scoreSprite[score[i]];
+    for(let i =0 ; i< number.length ; i++){
+        let num = scoreSprite[number[i]];
 
         ctx.drawImage(
             flappyBirdSpriteSheet ,
             num.x , num.y , num.w , num.h ,
             currentX , (height / scale / 2) - (58/2)+(39), num.w , num.h
+        );
+        currentX += num.w + 1 ;
+    }
+}
+
+export function drawBestScore(){
+    const score = localStorage.getItem("best");
+    if(!score) return ;
+
+    let totalWidth = 0 ;
+    for(let i = 0 ; i < score.length ; i++){
+        totalWidth += scoreSprite[score[i]].w + 1 ;
+    }
+    totalWidth -= 1;
+    let startX = (width / scale / 2) - (113 / 2) - totalWidth / 2 + (92) ;
+    let currentX = startX ;
+
+    for (let i = 0 ; i < score.length ; i++){
+        let num = scoreSprite[score[i]];
+
+        ctx.drawImage(
+            flappyBirdSpriteSheet ,
+            num.x , num.y , num.w , num.h ,
+            currentX , (height / scale / 2) - (58 / 2) , num.w , num.h
+        );
+    }
+    console.log(isBest);
+
+    if(isBest){
+        ctx.drawImage(
+            flappyBirdSpriteSheet ,
+            146 , 245 , 16 , 7 ,
+            startX - 20 , (height / scale / 2) - (58 / 2) + (39) , 16 , 7
         );
     }
 }

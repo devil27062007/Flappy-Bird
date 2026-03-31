@@ -9,13 +9,13 @@ export function showPauseModal() {
             flappyBirdSpriteSheet,
             287, 58, 13, 14,
             5, 5, 13, 14
-        )
+        );
     }else{
         ctx.drawImage(
             flappyBirdSpriteSheet ,
             287 , 84 , 13 , 14 ,
             5 , 5 , 13 , 14 
-        )
+        );
     }
 }
 
