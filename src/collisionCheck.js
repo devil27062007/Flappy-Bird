@@ -3,6 +3,8 @@ import { gameRunning } from './main.js' ;
 import { drawBlast , rockets } from "./rocket.js" ;
 import { pipeGap , pipes , pipeSprite } from "./sceneCreation.js" ;
 
+const canvas = document.getElementById("main_canvas");
+const ctx = canvas.getContext('2d');
 
 export let stopCheckTimer = 0.001 ;
 let coyoteTimer = 0.3 ;
@@ -12,6 +14,7 @@ export function resetTimer(){
 }
 
 export function checkCollision( delta ){
+    if( player.isInvincible) return false;
     if(stopCheckTimer !== 0){
         if(stopCheckTimer < coyoteTimer) stopCheckTimer += delta
         else{
@@ -57,7 +60,7 @@ export function checkCollision( delta ){
         if(collidingWithRocket) {
             if(player.isShield){
                 player.isShield = false ;
-                stopCheckTimer += delta ;
+                stopCheckTimer += delta;
                 return false;
             }
             drawBlast() ;
@@ -76,7 +79,7 @@ export function isCollidiingWithTopPipe(pipe) {
     const pipeTop = pipe.gapY - pipeSprite.downward.h ;
 
     return(
-        player.x + player.w > pipeLeft &&
+        player.x + player.w - 1 > pipeLeft &&
         player.x < pipeRight &&
         player.y + player.h >pipeTop &&
         player.y < pipeBottom
@@ -91,7 +94,7 @@ export function isCollidiingWithBottomPipe(pipe){
     const pipeTop = pipe.gapY + pipeGap ;
 
     return(
-        player.x + player.w > pipeLeft &&
+        player.x + player.w - 1> pipeLeft &&
         player.x < pipeRight &&
         player.y + player.h > pipeTop &&
         player.y < pipeBottom

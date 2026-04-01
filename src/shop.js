@@ -38,7 +38,7 @@ export const items = {
         sprite: { x: 408, y: 102, w: 22, h: 22 },
         title: "Invincible",
         price: 10,
-        descp: "Make you invinsible for 5s",
+        descp: "Make you invinsible for 5s (point 5x)",
     },
     Shield: {
         sprite: { x: 433, y: 102, w: 22, h: 22 },

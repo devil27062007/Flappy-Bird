@@ -45,7 +45,8 @@ export function spawnRocket(){
                     y: y ,
                     w: 31 ,
                     h: 21 ,
-                    speed : randomSpeed()
+                    speed : randomSpeed(),
+                    isDead: false
                 }
             )
         }
@@ -83,16 +84,34 @@ export function randomY(){
 
 export function updateRocket(delta){
 
-    for( let i = 0 ; i < rockets.length ; i++ ){
-        let rocket = rockets[i] ;
-        drawRocket(rocket);
+    if(player.isRocket){
+        for(let i = 0 ; i < rockets.length ; i++){
+            let rocket = rockets[i];
+
+            if(!rocket.isDead){
+                rocket.isDead = true;
+
+                setTimeout(()=>{
+                    rockets = rockets.filter(r => r !== rocket);
+                }, 200);
+            }
+        }
+
+        player.isRocket = false;
     }
 
-    rockets.forEach(rocket =>{
-        rocket.x -= rocketSpeed * delta ;
-    });
+    for( let i = 0 ; i < rockets.length ; i++ ){
+        let rocket = rockets[i] ;
 
-    rockets = rockets.filter(rocket => rocket.x > -50)
+        if(rocket.isDead){
+            drawBlast(rocket);
+        }else{
+            drawBlast(rocket);
+            rocket.x -=rocket.speed * delta ;
+        }
+    }
+
+    rockets = rockets.filter(rocket => rocket.x > -50);
 }
 
 export function drawRocket(rocket){
