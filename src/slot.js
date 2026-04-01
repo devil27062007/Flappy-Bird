@@ -17,7 +17,7 @@ export function setSlotToLocalStorage(){
     }
 }
 
-export function getSloFromLocalStorageAtInitial(){
+export function getSlotFromLocalStorageAtInitial(){
     for( let item in items){
         if(localStorage.getItem(item + "Slot")){
             const firstEmptySlot = index.indexOf(0);

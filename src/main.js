@@ -1,11 +1,12 @@
 import { gameLoop , player,resetCollidedRocket , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
-import { drawLoadoutButton, isClickOnLoadoutButton, isClickOnLoadoutCloseButton, isShowLoadout, showLoadoutPage, toggleLoadoutPage} from "./loadout.js";
+import { drawLoadoutButton,isClickOnDeleteButton,isClickOnTopOfSkill, isClickOnLoadoutButton, isClickOnLoadoutCloseButton, isShowLoadout, showLoadoutPage, toggleLoadoutPage} from "./loadout.js";
 import { isClickOnPauseButton } from "./pause.js" ;
 import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
 import { resetRocketSpawn} from "./rocket.js";
 import { drawBg , drawGround , updateGround , resetPipes} from "./sceneCreation.js" ;
 import { getScore , resetScore } from "./score.js" ;
 import { drawShowButton,isClickOnBuyButton, setBoughtItemsFromLocalToCode, isClickOnShopButton , isClickOnShopCloseButton , isShowShopPage , showShopPage , toggleShowPageVisibility } from "./shop.js" ;
+import { getSlotFromLocalStorageAtInitial}  from "./slot.js";
 import { addCurrency } from "./wallet.js";
 
 export const flappyBirdSpriteSheet = new Image() ;
@@ -225,6 +226,7 @@ export function startGameLoopWaitingForFirstTap(currentTime){
 toggleScene(gameRunning);
 
 setBoughtItemsFromLocalToCode();
+getSlotFromLocalStorageAtInitial();
 
 export function getMouse(e){
     const rect = canvas.getBoundingClientRect();
@@ -259,34 +261,39 @@ canvas.addEventListener('click', (e)=>{
         gameRunning = !gameRunning ;
         return ;
     }
-    if(isClickOnShopButton(mousePos.x , mousePos.y) && !gameRunning && !isShowShopPage){
+    if(isClickOnShopButton(mousePos.x , mousePos.y) && !gameRunning && !isShowShopPage && !isShowLoadout){
         console.log("shop btn");
         toggleShowPageVisibility();
         return;
     }
-    if(isClickOnLoadoutButton(mousePos.x , mousePos.y) && !isShowLoadout){
+    if(isClickOnLoadoutButton(mousePos.x , mousePos.y) && !isShowLoadout && !isShowShopPage && !gameover && !gameRunning){
         console.log("loadout btn presses");
         toggleLoadoutPage();
         return ;
     }
-    if(isClickOnStartButton(mousePos.x, mousePos.y) && !gameRunning && !isShowShopPage){
+    if(isClickOnStartButton(mousePos.x, mousePos.y) && !gameRunning && !isShowShopPage && isShowLoadout){
         gameRunning = true;
         toggleScene(gameRunning);
         return;
     }
-    if(isClickOnShopCloseButton(mousePos.x , mousePos.y) && isShowShopPage){
+    if(isClickOnShopCloseButton(mousePos.x , mousePos.y) && isShowShopPage && !isShowLoadout){
         toggleShowPageVisibility();
         return;
     }
-    if(isClickOnLoadoutCloseButton(mousePos.x , mousePos.y) && isShowLoadout){
+    if(isClickOnLoadoutCloseButton(mousePos.x , mousePos.y) && isShowLoadout && !isShowShopPage){
         toggleLoadoutPage();
         return ;
     }
-    if(isClickOnBuyButton(mousePos.x, mousePos.y) && isShowShopPage){
+    if(isClickOnTopOfSkill(mousePos.x , mousePos.y) && isShowLoadout && !isShowShopPage && !gameRunning &&!gameover){
         return;
     }
-    
-    if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning){
+    if(isClickOnDeleteButton(mousePos.x , mousePos.y) && isShowShopPage && !isShowLoadout && !gameRunning && !gameover){
+        return;
+    }
+    if(isClickOnBuyButton(mousePos.x, mousePos.y)&&!gameRunning && isShowShopPage && !isShowLoadout && !gameover){
+        return;
+    }
+    if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning && !isShowShopPage && !isShowLoadout){
         gameover = false;
         toggleScene(gameRunning);
         return ;

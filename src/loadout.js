@@ -1,12 +1,15 @@
 import { height, scale, width } from "./character.js";
 import { flappyBirdSpriteSheet } from "./main.js";
 import { drawPriceFont, items } from "./shop.js";
-import { maxSlot, slot } from "./slot.js";
+import { addToSlot, maxSlot, removeFromSlot, slot } from "./slot.js";
 
 const canvas = document.getElementById("main_canvas");
 const ctx = canvas.getContext('2d');
 
 export let isShowLoadout = false;
+
+const skillClickableLoc = {};
+export const deleteButtonLoc = [null, null, null];
 
 export function toggleLoadoutPage() {
     isShowLoadout = !isShowLoadout;
@@ -51,27 +54,31 @@ export function drawLoadoutPage() {
 
     let currentX = (width / scale / 2) - (113 / 2) + 15;
     let currentSlotsDrawn = 0;
+
     //draw if occupy slots
-    for (let i = 0; i < slot.length; i++) {
-        ctx.drawImage(
-            flappyBirdSpriteSheet,
-            491, 144, 22, 23,
-            currentX, centerY + 17, 22, 22
-        );
-        currentX += 30;
-        currentSlotsDrawn++;
-    }
-    if (currentSlotsDrawn < maxSlot) {
-        const leftAloneSlot = maxSlot - currentSlotsDrawn;
-        for (let i = 0; i < leftAloneSlot; i++) {
+    for (let i = 0; i < maxSlot; i++) {
+        const skill = slot[i] ?? null;
+        if (skill === null) {
             ctx.drawImage(
                 flappyBirdSpriteSheet,
                 491, 144, 22, 23,
                 currentX, centerY + 17, 22, 22
             );
-            currentX += 30;
-            currentSlotsDrawn++;
+        } else {
+            ctx.drawImage(
+                flappyBirdSpriteSheet ,
+                skill.x , skill.y , skill.w  , skill.h ,
+                currentX , centerY + 17,skill.w , skill.h 
+            );
+            ctx.drawImage(
+                flappyBirdSpriteSheet,
+                461, 68, 13, 17,
+                currentX + 22, centerY + 17, 7, 7
+            );
+
+            deleteButtonLoc[i] = {x: currentX + 22 , y : centerY + 17 , w : 7,h: 7};
         }
+        currentX +=30;
     }
 
     ctx.font = "8px 'Pixelify Sans'";
@@ -85,21 +92,25 @@ export function drawLoadoutPage() {
     for (let item in items) {
         const skillSprite = items[item].sprite;
 
+        //power up
         ctx.drawImage(
             flappyBirdSpriteSheet,
             skillSprite.x, skillSprite.y, skillSprite.w, skillSprite.h,
             centerX + 8 + (row * 35), centerY + 55 + (col * 20), skillSprite.w * 0.7, skillSprite.h * 0.7
         );
+
+        //x for multiplier
         ctx.drawImage(
             flappyBirdSpriteSheet,
             474, 141, 5, 6,
             centerX + 8 + (row * 35) + 17, centerY + 55 + (col * 20) + 7, 3, 4
         );
+        skillClickableLoc[item] = {x: centerX + 8 + (row*35), y:centerY +55+(col*20), w: skillSprite.w*0.7 , h:skillSprite.h*0.7};
         let quantity;
         if (localStorage.getItem(item)) {
             quantity = localStorage.getItem(item);
         } else {
-            quantity = 0;
+            quantity = "0";
         }
         drawPriceFont(quantity, centerX + 8 + (row * 35) + 22, centerY + 55 + (col * 20) + 7, 0.5);
         col++;
@@ -109,6 +120,42 @@ export function drawLoadoutPage() {
         }
     }
 
+}
+
+export function isClickOnTopOfSkill(mouseX , mouseY){
+    for(let item in skillClickableLoc) {
+        const skill = skillClickableLoc[itam];
+        const check = (
+            mouseX >= skill.x &&
+            mouseX <= skill.x + skill.w &&
+            mouseY >= skill.y &&
+            mouseY <= skill.y + skill.h
+        )
+        if(check) {
+            console.log(item)
+            addToSlot(item)
+            return true
+        }
+    }
+    return false;
+}
+
+export function isClickOnDeleteButton(mouseX , mouseY){
+    for(let i = 0 ; i < deleteButtonLoc.length ; i++){
+        const btn = deleteButtonLoc[i] ?? null;
+        if(btn === null) continue ;
+        const check = (
+            mouseX >= btn.x &&
+            mouseX <= btn.x + btn.w &&
+            mouseY >= btn.y &&
+            mouseY <= btn.y + btn.h
+        )
+        if(check){
+            removeFromSlot(i);
+            return true;
+        }
+    }
+    return false ;
 }
 
 export function isClickOnLoadoutButton(mouseX, mouseY) {
@@ -121,7 +168,6 @@ export function isClickOnLoadoutButton(mouseX, mouseY) {
 }
 
 export function isClickOnLoadoutCloseButton(mouseX, mouseY) {
-    console.log("inside loadout");
     return (
         mouseX >= (width / scale / 2) - (113 / 2) + 113 - 12 &&
         mouseX <= (width / scale / 2) - (113 / 2) + 113 &&
