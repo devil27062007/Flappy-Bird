@@ -1,4 +1,4 @@
-import { gameLoop , player,resetCollidedRocket , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
+import { gameLoop ,isClickOnGameSlot, player,upForce,resetCollidedRocket , scale , width , resetPlayer , stopGameAnimation} from "./character.js" ;
 import { drawLoadoutButton,isClickOnDeleteButton,isClickOnTopOfSkill, isClickOnLoadoutButton, isClickOnLoadoutCloseButton, isShowLoadout, showLoadoutPage, toggleLoadoutPage} from "./loadout.js";
 import { isClickOnPauseButton } from "./pause.js" ;
 import { drawRetryPage , isClickedOnOkButton } from "./retryPage.js" ;
@@ -293,6 +293,9 @@ canvas.addEventListener('click', (e)=>{
     if(isClickOnBuyButton(mousePos.x, mousePos.y)&&!gameRunning && isShowShopPage && !isShowLoadout && !gameover){
         return;
     }
+    if(isClickOnInGameSlot(mousePos.x , mousePos.y) && gameRunning && !gameover && !isShowLoadout && !isShowShopPage){
+        return;
+    }
     if(isClickedOnOkButton(mousePos.x , mousePos.y) && !gameRunning && !isShowShopPage && !isShowLoadout){
         gameover = false;
         toggleScene(gameRunning);
@@ -303,7 +306,7 @@ canvas.addEventListener('click', (e)=>{
             firstTapped = true ;
             toggleScene(gameRunning)
         }
-        player.velocity_y = -150;
+        player.velocity_y = -upForce;
     }
 })
 

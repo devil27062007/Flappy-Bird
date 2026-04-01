@@ -3,9 +3,29 @@ import { gameRunning } from './main.js' ;
 import { drawBlast , rockets } from "./rocket.js" ;
 import { pipeGap , pipes , pipeSprite } from "./sceneCreation.js" ;
 
-export function checkCollision( player){
+
+export let stopCheckTimer = 0.001 ;
+let coyoteTimer = 0.3 ;
+
+export function resetTimer(){
+    stopCheckTimer = 0 ;
+}
+
+export function checkCollision( delta ){
+    if(stopCheckTimer !== 0){
+        if(stopCheckTimer < coyoteTimer) stopCheckTimer += delta
+        else{
+            stopCheckTimer = 0;
+        }
+        return false;
+    }
     const groundY = height / scale - 50 ;
     if(player.y + player.h >= groundY ) {
+        if(player.isShield){
+            player.isShield = false ;
+            stopCheckTimer += delta;
+            return false;
+        }
         return true;
     }
     for ( let pipe of pipes ) {
@@ -13,9 +33,21 @@ export function checkCollision( player){
         const collidingWithBottomPipe = isCollidiingWithBottomPipe(pipe) ;
 
         if(collidingWithTopPipe){
+            if(player.isShield){
+                player.isShield = false ;
+                stopCheckTimer += delta ;
+                coyoteTimer = 0.5 ;
+                return false ;
+            }
             return true ;
         }
         if(collidingWithBottomPipe){
+            if(player.isShield){
+                player.isShield = false ;
+                stopCheckTimer += delta ;
+                coyoteTimer = 0.5 ;
+                return false;
+            }
             return true ;
         }
     }
@@ -23,6 +55,11 @@ export function checkCollision( player){
         const collidingWithRocket = isCollidiingWithRocket(rocket) ;
 
         if(collidingWithRocket) {
+            if(player.isShield){
+                player.isShield = false ;
+                stopCheckTimer += delta ;
+                return false;
+            }
             drawBlast() ;
             setCollidedRocket(rocket) ;
             return true ;

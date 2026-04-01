@@ -5,7 +5,7 @@ import { getCurrency, deductCurrency } from "./wallet.js";
 const canvas = document.getElementById("main_canvas");
 const ctx = canvas.getContext('2d');
 
-const boughtItems = {};
+export const boughtItems = {};
 
 export let isShowShopPage = false;
 let scrollOffset = 0;
@@ -76,8 +76,12 @@ export function setBoughtItemsFromLocalToCode() {
 }
 
 export function deductBoughtItems(item) {
-    boughtItems[item]--;
-    storeBoughtItemsInLocalStorage();
+    if (boughtItems[item] - 1 > -0) {
+        boughtItems[item]--;
+        storeBoughtItemsInLocalStorage();
+        return true;
+    }
+    return false;
 }
 
 export function creditBoughtItems(item) {
@@ -340,23 +344,28 @@ export function isClickOnBuyButton(mouseX, mouseY) {
         return false;
     }
 
-    for (let buyButton in buyButtonLoc){
+    for (let buyButton in buyButtonLoc) {
         const button = buyButtonLoc[buyButton];
 
         const check = (
-            mouseX >= button.x && 
+            mouseX >= button.x &&
             mouseX <= button.x + button.w &&
             mouseY >= button.y &&
             mouseY <= button.y + button.h
         )
-        if(check){
-            if(boughtItems[buyButton]){
-                creditBoughtItems(buyButton);
-                deductCurrency(items[buyButton].price);
-            }else{
-                boughtItems[buyButton] = 1 ;
-                deductCurrency(items[buyButton].price);
-                storeBoughtItemsInLocalStorage();
+        if (check) {
+            if (boughtItems[buyButton]) {
+                const canDeduct = deductCurrency(items[buyButton].price);
+                if (canDeduct) {
+                    creditBoughtItems(buyButton);
+                }
+            } else {
+                const canDeduct = deductCurrency(items[buyButton].price);
+                if (canDeduct) {
+                    boughtItems[buyButton] = 1;
+
+                    storeBoughtItemsInLocalStorage();
+                }
             }
             console.log(boughtItems);
             return true;

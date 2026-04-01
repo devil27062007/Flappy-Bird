@@ -15,6 +15,10 @@ export function getCurrency(){
 
 export function deductCurrency(price){
     let currency = parseInt(localStorage.getItem("currency"));
-    currency -= price ;
-    localStorage.setItem("currency" , currency );
+    if(currency - price >= 0 ){
+        currency -= price;
+        localStorage.setItem("currency" , currency);
+        return true ;
+    }
+    return false;
 }
