@@ -1,3 +1,4 @@
+import { playHitSound, playSwooshSound } from "./audio.js";
 import { checkCollision, resetTimer, stopCheckTimer } from "./collisionCheck.js";
 import { flappyBirdSpriteSheet, gameRunning, gameOver, gameover } from "./main.js";
 import { showPauseModal } from "./pause.js";
@@ -23,7 +24,7 @@ let collidedRocket = null;
 
 let skillInGameLoc = [null, null, null];
 
-const gravity = 500;
+const gravity = 450;
 export let upForce = 150;
 
 export function stopGameAnimation() {
@@ -65,13 +66,14 @@ export let player = {
     isShield: false,
     isInvincible: false,
     isGravity: false,
-    isInvinsibility: false,
+    isInvisibility: false,
+    isRocket: false,
 }
 
 let shieldTimer = 0;
 let invincibleTimer = 0;
 let gravityTimer = 0;
-let InvisibilityTimer = 0;
+let invisibilityTimer = 0;
 
 export const characterAnimation = {
     up: { x: 264, y: 64, w: 17, h: 12 },
@@ -98,10 +100,11 @@ export function resetPlayer() {
     player.isShield = false;
     player.isInvincible = false;
     player.isGravity = false;
-    player.isInvinsibility = false;
+    player.isInvisibility = false;
+    player.isRocket = false;
     shieldTimer = 0;
     invincibleTimer = 0;
-    InvisibilityTimer = 0;
+    invisibilityTimer = 0;
     gravityTimer = 0;
     resetTimer();
 }
@@ -116,11 +119,16 @@ export function resetCollidedRocket(rocket) {
 
 function animateCharacter() {
     let sprite;
+    let rotationDegree = player.velocity_y * 0.10;
+
+    if (rotationDegree < -25) rotationDegree = -25;
+    if (rotationDegree > 30) rotationDegree = 30;
+
     if (player.velocity_y < -50) {
         sprite = characterAnimation['up'];
         ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(-10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -132,7 +140,7 @@ function animateCharacter() {
         sprite = characterAnimation['mid'];
         ctx.save();
         ctx.translate(player.x, sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -144,7 +152,7 @@ function animateCharacter() {
         sprite = characterAnimation['down'];
         ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(-10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -152,15 +160,21 @@ function animateCharacter() {
         );
         ctx.restore();
     }
+
 }
 
 export function animateCharacterWithShield() {
     let sprite;
+    let rotationDegree = player.velocity_y * 0.10;
+
+    if (rotationDegree < -25) rotationDegree = -25;
+    if (rotationDegree > 30) rotationDegree = 30;
+
     if (player.velocity_y < -50) {
         sprite = characterAnimationWithShield["up"];
         ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(-10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -172,7 +186,7 @@ export function animateCharacterWithShield() {
         sprite = characterAnimationWithShield["mid"];
         ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -183,7 +197,7 @@ export function animateCharacterWithShield() {
         sprite = characterAnimationWithShield["down"];
         ctx.sve();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
-        ctx.rotate(-10 * Math.PI / 180);
+        ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
@@ -191,6 +205,70 @@ export function animateCharacterWithShield() {
         );
         ctx.restore();
     }
+}
+
+function animateCharacterWithInvinsible() {
+    let sprite;
+
+    let rotationDegree = player.velocity_y;
+
+    if (rotationDegree < -25) rotationDegree = -25;
+    if (rotationDegree > 30) rotationDegree = 30;
+
+    if (player.velocity_y < -50) {
+        sprite = characterAnimationWithInvincible["up"];
+        ctx.save();
+        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.rotate(rotationDegree * Math.PI / 180);
+        ctx.drawImage(
+            flappyBirdSpriteSheet,
+            sprite.x, sprite.y, sprite.w, sprite.h,
+            -sprite.w / 2, -sprite.h / 2, sprite.w, sprite.h
+        );
+        ctx.restore();
+    }
+    else if (velocity_y > 50) {
+        sprite = characterAnimationWithInvincible["mid"];
+        ctx.save();
+        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.rotate(rotationDegree * Math.PI / 180);
+        ctx.drawImage(
+            flappyBirdSpriteSheet,
+            sprite.x, sprite.y, sprite.w, sprite.h,
+            -sprite.w / 2, - sprite.h / 2, sprite.w, sprite.h
+        );
+        ctx.restore();
+    } else {
+        sprite = characterAnimationWithInvincible["down"];
+        ctx.save();
+        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.rotate(rotationDegree * Math.PI / 180);
+        ctx.drawImage(
+            flappyBirdSpriteSheet,
+            sprite.x, sprite.y, sprite.w, sprite.h,
+            -sprite.w / 2, -sprite.h / 2, sprite.w, sprite.h
+        );
+        ctx.restore();
+    }
+}
+
+function animateCharacterAfterDeath() {
+    let sprite = characterAnimation["mid"];
+    let rotationDegree = player.velocity_y * 0.10;
+    if (rotationDegree < -25) rotationDegree = -25;
+    if (rotationDegree > 90) rotationDegree = 90;
+
+    ctx.save();
+    ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+    ctx.rotate(rotationDegree * Math.PI / 180);
+
+    ctx.drawImage(
+        flappyBirdSpriteSheet,
+        sprite.x, sprite.y, sprite.w, sprite.h,
+        -sprite.w / 2, -sprite.h / 2, sprite.w, sprite.h
+    );
+
+    ctx.restore();
 }
 
 function drawSlotsInGame() {
@@ -217,7 +295,7 @@ function drawSlotsInGame() {
         drawPriceFont(quantity.toString(), 10, currentY + 24.5);
 
         skillInGameLoc[i] = { x: 4, y: currentY, w: skill.w, h: skill.h, name: skill.name.replace("Slot", "") };
-        
+
         currentY += 40;
     }
 }
@@ -239,10 +317,20 @@ export function gameLoop(currentTime) {
 
     drawGround();
 
-    if(player.isShield){
+    if (gameover) {
+        animateCharacterAfterDeath();
+        player.velocity_y += gravity * delta * 0.5;
+        player.y += player.velocity_y * delta;
+    }
+
+    else if (player.isShield) {
         animateCharacterWithShield();
     }
-    else{
+    else if (player.isInvisibility){
+        invisibilityTimer += delta;
+        
+    }
+    else {
         animateCharacter();
     }
 
@@ -296,9 +384,9 @@ resizeCanvas();
 
 window.addEventListener('resize', resizeCanvas);
 
-export function isClickOnInGaameSlot(mouseX , mouseY){
-    for(let i = 0 ; i < skillInGameLoc.length ; i++){
-        if(skillInGameLoc[i] === null) continue;
+export function isClickOnInGaameSlot(mouseX, mouseY) {
+    for (let i = 0; i < skillInGameLoc.length; i++) {
+        if (skillInGameLoc[i] === null) continue;
         const skill = skillInGameLoc[i];
         const check = (
             mouseX >= skill.x &&
@@ -306,9 +394,9 @@ export function isClickOnInGaameSlot(mouseX , mouseY){
             mouseY >= skill.y &&
             mouseY <= skill.y + skill.h
         );
-        if(check){
+        if (check) {
             const canDeduct = deductBoughtItems(skill.name);
-            if(skill.name === "Shield" && canDeduct) player.isShield = true;
+            if (skill.name === "Shield" && canDeduct) player.isShield = true;
             return true;
         }
     }
