@@ -83,7 +83,7 @@ export function randomY(){
 
 export function updateRocket(delta){
 
-    for( let i = 0 ; i < rockets.length() ; i++ ){
+    for( let i = 0 ; i < rockets.length ; i++ ){
         let rocket = rockets[i] ;
         drawRocket(rocket);
     }

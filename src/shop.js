@@ -86,7 +86,7 @@ export function creditBoughtItems(item) {
 }
 
 export function drawShowButton() {
-    ctx.drwImage(
+    ctx.drawImage(
         flappyBirdSpriteSheet,
         247, 118, 40, 14,
         (width / scale / 2) - 19, 170, 40, 14
