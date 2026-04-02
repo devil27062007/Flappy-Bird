@@ -173,7 +173,7 @@ function animateCharacterWithShield() {
     if (player.velocity_y < -50) {
         sprite = characterAnimationWithShield["up"];
         ctx.save();
-        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
         ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -185,7 +185,7 @@ function animateCharacterWithShield() {
     else if (player.velocity_y > 50) {
         sprite = characterAnimationWithShield["mid"];
         ctx.save();
-        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
         ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -196,7 +196,7 @@ function animateCharacterWithShield() {
     } else {
         sprite = characterAnimationWithShield["down"];
         ctx.save();
-        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
+        ctx.translate(player.x + player.w / 2, player.y + player.h / 2);
         ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -324,11 +324,20 @@ export function gameLoop(currentTime) {
     }
 
     else if (player.isShield) {
+        const shieldPulse = 0.65 + Math.abs(Math.sin(currentTime * 0.02)) * 0.35;
+        ctx.save();
+        ctx.globalAlpha = shieldPulse;
         animateCharacterWithShield();
+        ctx.restore();
     }
     else if (player.isInvisibility) {
+        const invisibilityPulse = 0.25 + Math.abs(Math.sin(currentTime * 0.03)) * 0.35;
+        ctx.save();
+        ctx.globalAlpha = invisibilityPulse;
+        animateCharacter();
+        ctx.restore();
         invisibilityTimer += delta;
-        if (invisibilityTimer >= 3) {
+        if (invisibilityTimer >= 5) {
             player.isInvisibility = false;
             invisibilityTimer = 0;
         }
@@ -416,7 +425,7 @@ function useSkillFromInGameSlot(skill) {
     if (skill.name === "Shield" && canDeduct) player.isShield = true;
     if (skill.name === 'Invisibility' && canDeduct) {
         if (player.isInvisibility) {
-            invisibilityTimer -= 3;
+            invisibilityTimer -= 5;
             return true;
         }
         player.isInvisibility = true;
