@@ -34,7 +34,7 @@ Open the shop from the main meu to browse and purchase power-ups using your earn
 | **Shield** | Absorbs one hit and gives you a second chance |
 | **Rocket** | Destroys all incomming missiles |
 | **Invisibility** | Makes you invisible for 3 seconds - score multiplier x5 during this time |
-| **Invincible** | Makes you invincible for 5 second you dont die in that even hit by missile or hit on pippes |
+| **Invincible** | Makes you invincible for 5 second you dont die in that time even hit by missile or hit on pippes |
 | **Gravity** | Slows down vertical movement .It helps t0 cross pipes easily |
 
 >Power-ups can be stacked for combined effects.
