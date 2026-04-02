@@ -233,15 +233,14 @@ export function drawShopPage() {
         ctx.drawImage(
             flappyBirdSpriteSheet,
             474, 141, 5, 6,
-            shopX + 6, currentY + 5.5 + 18, 3, 4
+            shopX + 6, currentY + 6 + 18, 3, 4
         );
 
         //quantity
-        if (boughtItems[powerUpName]) {
-            drawPriceFont(boughtItems[powerUpName].toString(), shopX + 5.2 + 18, currentY + 5.2 + 18, 0.6);
-        } else {
-            drawPriceFont("0", shopX + 10, currentY + 5.2 + 18, 0.6);
-        }
+        const ownedCount = Number.isFinite(boughtItems[powerUpName]) && boughtItems[powerUpName] > 0
+            ? boughtItems[powerUpName]
+            : 0;
+        drawPriceFont(ownedCount.toString(), shopX + 10.2, currentY + 6 + 18, 0.6);
 
         ctx.imageSmoothingEnabled = false;
 
@@ -256,7 +255,7 @@ export function drawShopPage() {
             ctx.fillText(lines[i], shopX + 30, currentY + 12 + (i * lineHeight));
         }
 
-        const buttonY = currentY + 17 + extraHeight;
+        const buttonY = currentY + 19 + extraHeight;
 
         const rightXForCoin = drawPriceFont(powerUp.price.toString(), shopX + 30, buttonY);
 
