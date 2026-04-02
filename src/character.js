@@ -326,9 +326,21 @@ export function gameLoop(currentTime) {
     else if (player.isShield) {
         animateCharacterWithShield();
     }
-    else if (player.isInvisibility){
+    else if (player.isInvisibility) {
         invisibilityTimer += delta;
-        
+        if (invisibilityTimer) {
+            player.isInvisibility = false;
+            invisibilityTimer = 0;
+        }
+    }
+    else if (player.isInvincible) {
+
+        animateCharacterWithInvinsible();
+        invincibleTimer += delta;
+        if (invincibleTimer >= 5) {
+            player.isInvincible = false;
+            invincibleTimer = 0;
+        }
     }
     else {
         animateCharacter();
@@ -344,6 +356,17 @@ export function gameLoop(currentTime) {
     }
 
     if (gameRunning) {
+        if (player.isGravity) {
+            gravity = 200;
+            upForce = 50;
+            gravityTimer += delta;
+            if (gravityTimer >= 3) {
+                player.isGravity = false;
+                gravityTimer = 0;
+                gravity = 450;
+                upForce = 150;
+            }
+        }
         updatePipes(delta);
         updateGround(delta);
         updateRocket(delta);
@@ -353,6 +376,7 @@ export function gameLoop(currentTime) {
 
         if (rocket) {
             spawnRocket();
+
         }
 
         const groundY = height / scale - 50;
@@ -372,9 +396,15 @@ export function gameLoop(currentTime) {
 
     }
     const collided = checkCollision(delta);
-
     if (collided) {
+        if (!gameover) {
+            playHitSound();
+            setTimeout(() => {
+                playSwooshSound();
+            }, 100);
+        }
         gameOver();
+
     }
 
     animationId = requestAnimationFrame(gameLoop);
@@ -388,6 +418,7 @@ export function isClickOnInGaameSlot(mouseX, mouseY) {
     for (let i = 0; i < skillInGameLoc.length; i++) {
         if (skillInGameLoc[i] === null) continue;
         const skill = skillInGameLoc[i];
+        console.log(skill);
         const check = (
             mouseX >= skill.x &&
             mouseX <= skill.x + skill.w &&
@@ -396,7 +427,30 @@ export function isClickOnInGaameSlot(mouseX, mouseY) {
         );
         if (check) {
             const canDeduct = deductBoughtItems(skill.name);
+            console.log(skill.name)
             if (skill.name === "Shield" && canDeduct) player.isShield = true;
+            if (skill.name === 'Invisibility' && canDeduct) {
+                if (player.isInvisibility) {
+                    invisibilityTimer -= 3;
+                    return;
+                }
+                player.isInvisibility = true;
+            }
+            if (skill.name === "Gravity" && canDeduct) {
+                if (player.isGravity) {
+                    gravityTimer -= 3;
+                    return;
+                }
+                player.isGravity = true 
+            }
+            if(skill.name === "Invincible" && canDeduct){
+                if(player.isInvincible){
+                    invincibleTimer -= 5;
+                    return ;
+                }
+                player.isInvincible = true;
+            }
+            if(skill.name==="Rocket" && canDeduct){player.isRocket = true}
             return true;
         }
     }
