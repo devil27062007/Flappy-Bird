@@ -1,3 +1,4 @@
+import { playBlastSound } from "./audio.js";
 import { height , player , scale , width } from "./character.js";
 import { blastSprite , rocketSprite } from "./main.js";
 import { getScore } from "./score.js";
@@ -90,7 +91,7 @@ export function updateRocket(delta){
 
             if(!rocket.isDead){
                 rocket.isDead = true;
-
+                playBlastSound();
                 setTimeout(()=>{
                     rockets = rockets.filter(r => r !== rocket);
                 }, 200);

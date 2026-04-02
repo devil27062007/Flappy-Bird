@@ -414,7 +414,7 @@ resizeCanvas();
 
 window.addEventListener('resize', resizeCanvas);
 
-export function isClickOnInGaameSlot(mouseX, mouseY) {
+export function isClickOnInGameSlot(mouseX, mouseY) {
     for (let i = 0; i < skillInGameLoc.length; i++) {
         if (skillInGameLoc[i] === null) continue;
         const skill = skillInGameLoc[i];
@@ -441,16 +441,16 @@ export function isClickOnInGaameSlot(mouseX, mouseY) {
                     gravityTimer -= 3;
                     return;
                 }
-                player.isGravity = true 
+                player.isGravity = true
             }
-            if(skill.name === "Invincible" && canDeduct){
-                if(player.isInvincible){
+            if (skill.name === "Invincible" && canDeduct) {
+                if (player.isInvincible) {
                     invincibleTimer -= 5;
-                    return ;
+                    return;
                 }
                 player.isInvincible = true;
             }
-            if(skill.name==="Rocket" && canDeduct){player.isRocket = true}
+            if (skill.name === "Rocket" && canDeduct) { player.isRocket = true }
             return true;
         }
     }

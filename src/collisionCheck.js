@@ -1,3 +1,4 @@
+import { playBlastSound } from "./audio.js";
 import { height ,player , scale , setCollidedRocket } from './character.js' ;
 import { gameRunning } from './main.js' ;
 import { drawBlast , rockets } from "./rocket.js" ;
@@ -64,6 +65,7 @@ export function checkCollision( delta ){
                 return false;
             }
             drawBlast() ;
+            playBlastSound();
             setCollidedRocket(rocket) ;
             return true ;
         }
