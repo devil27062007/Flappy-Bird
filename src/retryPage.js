@@ -3,7 +3,7 @@ import { flappyBirdSpriteSheet, isBest } from "./main.js";
 import { getScore } from "./score.js";
 
 const canvas = document.getElementById('main_canvas');
-const ctx = canvas.getContext('2d')
+const ctx = canvas.getContext('2d');
 
 const scoreSprite = {
     '0': { x: 287, y: 74, w: 6, h: 7 },
@@ -21,7 +21,7 @@ const scoreSprite = {
 const medalSprite = [
     { x: 302, y: 137, w: 22, h: 22 },
     { x: 266, y: 229, w: 22, h: 22 },
-    { x: 242, y: 229, W: 22, h: 22 },
+    { x: 242, y: 229, w: 22, h: 22 },
 ]
 
 export function drawRetryPage() {
@@ -34,7 +34,7 @@ export function drawRetryPage() {
     ctx.drawImage(
         flappyBirdSpriteSheet,
         146, 199, 94, 19,
-        (width / scale / 2) - (40 / 2), (height / scale / 2) - (14 / 2) + 50, 40, 14
+        (width / scale / 2) - 45,80,94, 19
     );
 
     drawScore();
@@ -75,7 +75,7 @@ export function drawScore() {
         ctx.drawImage(
             flappyBirdSpriteSheet,
             num.x, num.y, num.w, num.h,
-            currentX, (height / scale / 2) - (58 / 2) + (39), num.w, num.h
+            currentX, (height / scale / 2) - (58 / 2) + (18), num.w, num.h
         );
         currentX += num.w + 1;
     }
@@ -99,7 +99,7 @@ export function drawBestScore() {
         ctx.drawImage(
             flappyBirdSpriteSheet,
             num.x, num.y, num.w, num.h,
-            currentX, (height / scale / 2) - (58 / 2), num.w, num.h
+            currentX, (height / scale / 2) - (58 / 2) +(39), num.w, num.h
         );
         currentX += num.w + 1;
     }

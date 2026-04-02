@@ -25,7 +25,7 @@ export function playHitSound(){
 }
 
 export function playScoreSound(){
-    scoreAudio.cloneNode(true),play().catch(e => console.log(e));
+    scoreAudio.cloneNode(true).play().catch(e => console.log(e));
 }
 
 export function playDieSound(){

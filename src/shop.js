@@ -1,5 +1,5 @@
 import { height, scale, width } from "./character.js";
-import { flappyBirdSpriteSheet } from "./main.js";
+import { flappyBirdSpriteSheet, gameRunning } from "./main.js";
 import { getCurrency, deductCurrency } from "./wallet.js";
 
 const canvas = document.getElementById("main_canvas");
@@ -10,9 +10,9 @@ export const boughtItems = {};
 export let isShowShopPage = false;
 let scrollOffset = 0;
 const itemHeight = 30;
-const shopContentHeight = 98 - 25;
+const shopContentHeight = 98 - 30;
 
-const buyButtonLoc = {}
+const buyButtonLoc = {};
 
 const currencySprite = {
     '0': { x: 287, y: 74, w: 6, h: 7 },
@@ -34,11 +34,11 @@ export const items = {
         price: 10,
         descp: "Make the Bird go Up and Down Slow"
     },
-    Invinsible: {
+    Invincible: {
         sprite: { x: 408, y: 102, w: 22, h: 22 },
         title: "Invincible",
         price: 10,
-        descp: "Make you invinsible for 5s (point 5x)",
+        descp: "Make you Invincible for 5s (point 5x)",
     },
     Shield: {
         sprite: { x: 433, y: 102, w: 22, h: 22 },
@@ -48,9 +48,9 @@ export const items = {
     },
     Rocket: {
         sprite: { x: 408, y: 144, w: 22, h: 22 },
-        title: "Tnterceptor",
+        title: "Interceptor",
         price: 20,
-        descp: "Destroy all incoming Rocket"
+        descp: "Destroys all incoming Rocket"
     },
     Invisibility: {
         sprite: { x: 434, y: 128, w: 22, h: 22 },
@@ -126,12 +126,12 @@ export function drawPriceFont(text, x, y, scale = 0.7) {
         if (currencySprite[char]) {
             const sprite = currencySprite[char];
             const scaledW = sprite.w * scale;
-            const sccaledH = sprite.h * scale;
+            const scaledH = sprite.h * scale;
 
             ctx.drawImage(
                 flappyBirdSpriteSheet,
                 sprite.x, sprite.y, sprite.w, sprite.h,
-                currentX, y, scaledW, sccaledH
+                currentX, y, scaledW, scaledH
             );
 
             currentX += scaledW + (1 * scale);
@@ -172,7 +172,7 @@ function getDynamicTotalContentHeight() {
     for (let key in items) {
         const text = items[key].descp;
 
-        const lines = getWrappedLines();
+        const lines = getWrappedLines(text, 70);
 
         const extraHeight = Math.max(0, (lines.length - 1) * lineHeight);
 
@@ -207,7 +207,7 @@ export function drawShopPage() {
 
     ctx.clip();
 
-    let currentY = shopY + 25 + scrollOffset;
+    let currentY = shopY + 20 + scrollOffset;
     const baseHeight = 30;
     const lineHeight = 6;
 
@@ -238,14 +238,14 @@ export function drawShopPage() {
 
         //quantity
         if (boughtItems[powerUpName]) {
-            drawPriceFont(boughtItems[powerUpName].toString(), shopX + 10 + 18, 0.6);
+            drawPriceFont(boughtItems[powerUpName].toString(), shopX + 5.2 + 18, currentY + 5.2 + 18, 0.6);
         } else {
             drawPriceFont("0", shopX + 10, currentY + 5.2 + 18, 0.6);
         }
 
         ctx.imageSmoothingEnabled = false;
 
-        ctx.font = " 8px 'Pixelify Sans'";
+        ctx.font = "8px 'Pixelify Sans'";
         ctx.fillStyle = 'black';
         ctx.fillText(powerUpName, shopX + 30, currentY + 5);
 
@@ -292,12 +292,28 @@ export function isClickOnShopCloseButton(mouseX, mouseY) {
 
 export function drawCurrency() {
 
-    const currentBalance = getCurrency().toString();
+    const parsedBalance = Number(getCurrency());
+    const safeBalance = Number.isFinite(parsedBalance) && parsedBalance >= 0 ? Math.floor(parsedBalance) : 0;
+    const currentBalance = safeBalance.toString();
+    const zeroSprite = currencySprite['0'] || { x: 287, y: 74, w: 6, h: 7 };
+    const digitSprites = [];
+
+    for (let i = 0; i < currentBalance.length; i++) {
+        const sprite = currencySprite[currentBalance[i]];
+        if (sprite) {
+            digitSprites.push(sprite);
+        }
+    }
+
+    if (digitSprites.length === 0) {
+        digitSprites.push(zeroSprite);
+    }
 
     let totalWidth = 0;
 
-    for (let i = 0; i < currentBalance.length; i++) {
-        totalWidth += currencySprite[currentBalance[i]].w + 1;
+    for (let i = 0; i < digitSprites.length; i++) {
+        const sprite = digitSprites[i] || zeroSprite;
+        totalWidth += sprite.w + 1;
     }
     totalWidth -= 1;
 
@@ -308,8 +324,8 @@ export function drawCurrency() {
     let startX = (width / scale / 2) - totalWidth / 2;
     let currentX = startX;
 
-    for (let i = 0; i < currentBalance.length; i++) {
-        const currentNum = currencySprite[currentBalance[i]];
+    for (let i = 0; i < digitSprites.length; i++) {
+        const currentNum = digitSprites[i] || zeroSprite;
 
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -371,7 +387,7 @@ export function isClickOnBuyButton(mouseX, mouseY) {
             return true;
         }
     }
-    return true;
+    return false;
 }
 
 canvas.addEventListener("wheel", (e) => {

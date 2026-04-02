@@ -24,7 +24,7 @@ let collidedRocket = null;
 
 let skillInGameLoc = [null, null, null];
 
-const gravity = 450;
+let gravity = 450;
 export let upForce = 150;
 
 export function stopGameAnimation() {
@@ -46,8 +46,8 @@ export function resizeCanvas() {
     canvas.width = logicalW * dpr;
     canvas.height = logicalH * dpr;
 
-    canvas.style.width = `${logicalW}px`
-    canvas.style.height = `${logicalH}px`
+    canvas.style.width = `${logicalW}px`;
+    canvas.style.height = `${logicalH}px`;
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -110,7 +110,7 @@ export function resetPlayer() {
 }
 
 export function setCollidedRocket(rocket) {
-    collidedRocket = rocket;
+    collidedRocket = null;
 }
 
 export function resetCollidedRocket(rocket) {
@@ -132,14 +132,14 @@ function animateCharacter() {
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            -sprite.w / 3, -sprite.h / 2, sprite.w, sprite.h
+            -sprite.w / 2, -sprite.h / 2, sprite.w, sprite.h
         );
         ctx.restore();
     }
     else if (player.velocity_y > 50) {
         sprite = characterAnimation['mid'];
         ctx.save();
-        ctx.translate(player.x, sprite.w / 2, player.y + sprite.h / 2);
+        ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
         ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
             flappyBirdSpriteSheet,
@@ -163,7 +163,7 @@ function animateCharacter() {
 
 }
 
-export function animateCharacterWithShield() {
+function animateCharacterWithShield() {
     let sprite;
     let rotationDegree = player.velocity_y * 0.10;
 
@@ -178,7 +178,7 @@ export function animateCharacterWithShield() {
         ctx.drawImage(
             flappyBirdSpriteSheet,
             sprite.x, sprite.y, sprite.w, sprite.h,
-            -sprite.w / 2 - sprite.h / 2, sprite.w, sprite.h
+            -sprite.w / 2, - sprite.h / 2, sprite.w, sprite.h
         );
         ctx.restore();
     }
@@ -195,7 +195,7 @@ export function animateCharacterWithShield() {
         ctx.restore();
     } else {
         sprite = characterAnimationWithShield["down"];
-        ctx.sve();
+        ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
         ctx.rotate(rotationDegree * Math.PI / 180);
         ctx.drawImage(
@@ -210,7 +210,7 @@ export function animateCharacterWithShield() {
 function animateCharacterWithInvinsible() {
     let sprite;
 
-    let rotationDegree = player.velocity_y;
+    let rotationDegree = player.velocity_y * 10;
 
     if (rotationDegree < -25) rotationDegree = -25;
     if (rotationDegree > 30) rotationDegree = 30;
@@ -227,7 +227,7 @@ function animateCharacterWithInvinsible() {
         );
         ctx.restore();
     }
-    else if (velocity_y > 50) {
+    else if (player.velocity_y > 50) {
         sprite = characterAnimationWithInvincible["mid"];
         ctx.save();
         ctx.translate(player.x + sprite.w / 2, player.y + sprite.h / 2);
@@ -328,7 +328,7 @@ export function gameLoop(currentTime) {
     }
     else if (player.isInvisibility) {
         invisibilityTimer += delta;
-        if (invisibilityTimer) {
+        if (invisibilityTimer >= 3) {
             player.isInvisibility = false;
             invisibilityTimer = 0;
         }
@@ -372,7 +372,6 @@ export function gameLoop(currentTime) {
 
         if (rocket) {
             spawnRocket();
-
         }
 
         const groundY = height / scale - 50;
@@ -410,6 +409,49 @@ resizeCanvas();
 
 window.addEventListener('resize', resizeCanvas);
 
+function useSkillFromInGameSlot(skill) {
+    const canDeduct = deductBoughtItems(skill.name);
+    console.log(skill.name)
+
+    if (skill.name === "Shield" && canDeduct) player.isShield = true;
+    if (skill.name === 'Invisibility' && canDeduct) {
+        if (player.isInvisibility) {
+            invisibilityTimer -= 3;
+            return true;
+        }
+        player.isInvisibility = true;
+    }
+    if (skill.name === "Gravity" && canDeduct) {
+        if (player.isGravity) {
+            gravityTimer -= 3;
+            return true;
+        }
+        player.isGravity = true
+    }
+    if (skill.name === "Invincible" && canDeduct) {
+        if (player.isInvincible) {
+            invincibleTimer -= 5;
+            return true;
+        }
+        player.isInvincible = true;
+    }
+    if (skill.name === "Rocket" && canDeduct) { player.isRocket = true }
+    return canDeduct;
+}
+
+export function useInGameSlot(slotIndex) {
+    if (slotIndex < 0 || slotIndex >= skillInGameLoc.length) {
+        return false;
+    }
+
+    const skill = skillInGameLoc[slotIndex];
+    if (!skill) {
+        return false;
+    }
+
+    return useSkillFromInGameSlot(skill);
+}
+
 export function isClickOnInGameSlot(mouseX, mouseY) {
     for (let i = 0; i < skillInGameLoc.length; i++) {
         if (skillInGameLoc[i] === null) continue;
@@ -422,32 +464,7 @@ export function isClickOnInGameSlot(mouseX, mouseY) {
             mouseY <= skill.y + skill.h
         );
         if (check) {
-            const canDeduct = deductBoughtItems(skill.name);
-            console.log(skill.name)
-            if (skill.name === "Shield" && canDeduct) player.isShield = true;
-            if (skill.name === 'Invisibility' && canDeduct) {
-                if (player.isInvisibility) {
-                    invisibilityTimer -= 3;
-                    return true;
-                }
-                player.isInvisibility = true;
-            }
-            if (skill.name === "Gravity" && canDeduct) {
-                if (player.isGravity) {
-                    gravityTimer -= 3;
-                    return true;
-                }
-                player.isGravity = true
-            }
-            if (skill.name === "Invincible" && canDeduct) {
-                if (player.isInvincible) {
-                    invincibleTimer -= 5;
-                    return true;
-                }
-                player.isInvincible = true;
-            }
-            if (skill.name === "Rocket" && canDeduct) { player.isRocket = true }
-            return true;
+            return useSkillFromInGameSlot(skill);
         }
     }
     return false;

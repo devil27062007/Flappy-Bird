@@ -6,6 +6,7 @@ let score = {
 
 export function addPoint(point = 1){
     score.score += point;
+    playScoreSound();
 }
 
 export function resetScore(){

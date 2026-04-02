@@ -4,7 +4,7 @@ import { drawPriceFont, items } from "./shop.js";
 import { addToSlot, maxSlot, removeFromSlot, slot } from "./slot.js";
 
 const canvas = document.getElementById("main_canvas");
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext("2d");
 
 export let isShowLoadout = false;
 
@@ -124,7 +124,7 @@ export function drawLoadoutPage() {
 
 export function isClickOnTopOfSkill(mouseX , mouseY){
     for(let item in skillClickableLoc) {
-        const skill = skillClickableLoc[itam];
+        const skill = skillClickableLoc[item];
         const check = (
             mouseX >= skill.x &&
             mouseX <= skill.x + skill.w &&
@@ -161,7 +161,7 @@ export function isClickOnDeleteButton(mouseX , mouseY){
 export function isClickOnLoadoutButton(mouseX, mouseY) {
     return (
         mouseX >= (width / scale / 2) - 19 &&
-        mouseY <= (width / scale / 2) - 19 + 40 &&
+        mouseX <= (width / scale / 2) - 19 + 40 &&
         mouseY >= 190 &&
         mouseY <= 190 + 14
     );
@@ -171,7 +171,7 @@ export function isClickOnLoadoutCloseButton(mouseX, mouseY) {
     return (
         mouseX >= (width / scale / 2) - (113 / 2) + 113 - 12 &&
         mouseX <= (width / scale / 2) - (113 / 2) + 113 &&
-        mouseY <= (height / scale / 2) - (98 / 2) &&
+        mouseY >= (height / scale / 2) - (98 / 2) &&
         mouseY <= (height / scale / 2) - (98 / 2) + 13
     );
 }

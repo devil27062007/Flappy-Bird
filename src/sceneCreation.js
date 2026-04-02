@@ -5,10 +5,10 @@ import { rockets } from "./rocket.js";
 import { flappyBirdSpriteSheet } from "./main.js";
 
 const canvas = document.getElementById('main_canvas');
-const ctx = canvas.getContext('2d')
+const ctx = canvas.getContext('2d');
 
 const bg = { x: 0, y: 0, w: 144, h: 256 };
-const ground = { x: 146, y: 0, w: 154, h: 56 }
+const ground = { x: 146, y: 0, w: 154, h: 56 };
 
 export const pipeSprite = {
     upward: { x: 330, y: 0, w: 26, h: 121 },
@@ -21,7 +21,7 @@ const scoreSprite = {
     '2': { x: 289, y: 134, w: 7, h: 10 },
     '3': { x: 289, y: 150, w: 7, h: 10 },
     '4': { x: 287, y: 173, w: 7, h: 10 },
-    '5': { x: 287, y: 183, w: 7, h: 10 },
+    '5': { x: 287, y: 185, w: 7, h: 10 },
     '6': { x: 165, y: 245, w: 7, h: 10 },
     '7': { x: 175, y: 245, w: 7, h: 10 },
     '8': { x: 185, y: 245, w: 7, h: 10 },
@@ -69,7 +69,7 @@ export function drawGround() {
     ctx.drawImage(
         flappyBirdSpriteSheet,
         ground.x, ground.y, ground.w, ground.h,
-        groundX, (width / scale), (height / scale) - 50, width / scale, 50
+        groundX + (width / scale), (height / scale) - 50, width / scale, 50
     );
 };
 
@@ -163,7 +163,7 @@ export function drawPipes() {
         );
         ctx.drawImage(
             flappyBirdSpriteSheet,
-            downward.x, downward.y, downward.w, downward.h,
+            upward.x, upward.y, upward.w, upward.h,
             pipe.x, pipe.gapY + pipeGap, upward.w, upward.h
         )
     })

@@ -11,7 +11,7 @@ let lastRocketScore = -1 ;
 let rocketSpawnCount = 1 ;
 let maxRocketCount = 10 ;
 
-const rocketSpeed = 45 ;
+const rocketSpeed = 40 ;
 
 export let rockets = [];
 
@@ -40,7 +40,7 @@ export function spawnRocket(){
 
 
         if(attempts < maxAttempts ){
-            rocket.push(
+            rockets.push(
                 {
                     x: x ,
                     y: y ,
@@ -107,7 +107,7 @@ export function updateRocket(delta){
         if(rocket.isDead){
             drawBlast(rocket);
         }else{
-            drawBlast(rocket);
+            drawRocket(rocket);
             rocket.x -=rocket.speed * delta ;
         }
     }
@@ -134,7 +134,7 @@ export function drawBlast(rocket){
     ctx.drawImage(
         blastSprite ,
         107 , 50 , 176 , 160 ,
-        rocket.x - 5 , rocket.y , 20 , 20
+        rocket.x - 5 , rocket.y , 30 , 30
     )
 }
 

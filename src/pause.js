@@ -1,6 +1,6 @@
 import { flappyBirdSpriteSheet, gameRunning } from "./main.js";
 
-const canvas = document.getElementById('main_canvas');
+const canvas = document.getElementById("main_canvas");
 const ctx = canvas.getContext('2d');
 
 export function showPauseModal() {
@@ -26,5 +26,5 @@ export function isClickOnPauseButton(mouseX , mouseY){
         mouseX <= 5 + 13 && 
         mouseY >= 5 && 
         mouseY <= 5 + 14
-    )
+    );
 }

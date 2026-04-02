@@ -9,7 +9,7 @@ A Flappy Bird clone built with **HTML5 Canvas** , **CSS** and **JavaScript** - f
 | Control | Action |
 |--------|--------|
 | `Click` or `Spacebar` | Flap wings |
-| Click skill slots (top-left) | Activate a power-up |
+| click skill slot or press 1 / 2 / 3 |  Activate power - up(Top left) |
 
 **Objective:** Fly through the pipes , rack up points and use your power-ups wisely to surviving as long as possible.
 

@@ -1,13 +1,13 @@
 import { playBlastSound } from "./audio.js";
-import { height ,player , scale , setCollidedRocket } from './character.js' ;
-import { gameRunning } from './main.js' ;
+import { height ,player , scale , setCollidedRocket } from "./character.js" ;
+import { gameRunning } from "./main.js" ;
 import { drawBlast , rockets } from "./rocket.js" ;
 import { pipeGap , pipes , pipeSprite } from "./sceneCreation.js" ;
 
 const canvas = document.getElementById("main_canvas");
 const ctx = canvas.getContext('2d');
 
-export let stopCheckTimer = 0.001 ;
+export let stopCheckTimer = 0.001 
 let coyoteTimer = 0.3 ;
 
 export function resetTimer(){
@@ -33,8 +33,8 @@ export function checkCollision( delta ){
         return true;
     }
     for ( let pipe of pipes ) {
-        const collidingWithTopPipe = isCollidiingWithTopPipe(pipe) ;
-        const collidingWithBottomPipe = isCollidiingWithBottomPipe(pipe) ;
+        const collidingWithTopPipe = isCollidingWithTopPipe(pipe) ;
+        const collidingWithBottomPipe = isCollidingWithBottomPipe(pipe) ;
 
         if(collidingWithTopPipe){
             if(player.isShield){
@@ -56,7 +56,7 @@ export function checkCollision( delta ){
         }
     }
     for(let rocket of rockets){
-        const collidingWithRocket = isCollidiingWithRocket(rocket) ;
+        const collidingWithRocket = isCollidingWithRocket(rocket) ;
 
         if(collidingWithRocket) {
             if(player.isShield){
@@ -64,7 +64,7 @@ export function checkCollision( delta ){
                 stopCheckTimer += delta;
                 return false;
             }
-            drawBlast() ;
+            drawBlast(rocket) ;
             playBlastSound();
             setCollidedRocket(rocket) ;
             return true ;
@@ -73,7 +73,7 @@ export function checkCollision( delta ){
     return false ;
 }
 
-export function isCollidiingWithTopPipe(pipe) {
+export function isCollidingWithTopPipe(pipe) {
 
     const pipeLeft = pipe.x ;
     const pipeRight = pipe.x + pipeSprite.downward.w;
@@ -83,12 +83,12 @@ export function isCollidiingWithTopPipe(pipe) {
     return(
         player.x + player.w - 1 > pipeLeft &&
         player.x < pipeRight &&
-        player.y + player.h >pipeTop &&
+        player.y + player.h > pipeTop &&
         player.y < pipeBottom
     );
 }
 
-export function isCollidiingWithBottomPipe(pipe){
+export function isCollidingWithBottomPipe(pipe){
 
     const pipeLeft = pipe.x ;
     const pipeRight = pipe.x + pipeSprite.upward.w ;
@@ -103,7 +103,7 @@ export function isCollidiingWithBottomPipe(pipe){
     );
 }
 
-export function isCollidiingWithRocket(rocket) {
+export function isCollidingWithRocket(rocket) {
 
     const padding = 3 ;
 

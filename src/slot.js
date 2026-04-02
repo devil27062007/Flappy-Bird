@@ -7,7 +7,7 @@ export const maxSlot = 3 ;
 
 export function setSlotToLocalStorage(){
     for(let i= 0 ; i < slot.length ; i++){
-        if(slot[i] == null) continue ;
+        if(slot[i] === null) continue ;
         const data = slot[i];
 
         if(localStorage.getItem(data.name)){
@@ -35,7 +35,7 @@ export function addToSlot(item){
 
     //check for it alredy in slots
     for( let i = 0 ; i < slot.length ; i++ ){
-        if(slot[i]===null){ continue ;}
+        if(slot[i]===null) continue ;
         const data = slot[i];
 
         if(data.name === item + "Slot") return ;

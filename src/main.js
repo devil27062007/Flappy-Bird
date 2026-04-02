@@ -1,5 +1,5 @@
 import { playDieSound, playFlapSound, playMainTheme } from "./audio.js";
-import { gameLoop, player, upForce, resetCollidedRocket, scale, width, resetPlayer, stopGameAnimation, isClickOnInGameSlot } from "./character.js";
+import { gameLoop, player, upForce, resetCollidedRocket, scale, width, resetPlayer, stopGameAnimation, isClickOnInGameSlot, useInGameSlot } from "./character.js";
 import { drawLoadoutButton, isClickOnDeleteButton, isClickOnTopOfSkill, isClickOnLoadoutButton, isClickOnLoadoutCloseButton, isShowLoadout, showLoadoutPage, toggleLoadoutPage } from "./loadout.js";
 import { isClickOnPauseButton } from "./pause.js";
 import { drawRetryPage, isClickedOnOkButton } from "./retryPage.js";
@@ -11,7 +11,7 @@ import { getSlotFromLocalStorageAtInitial } from "./slot.js";
 import { addCurrency } from "./wallet.js";
 
 export const flappyBirdSpriteSheet = new Image();
-flappyBirdSpriteSheet.src = 'assets/flappybirdassets.png';
+flappyBirdSpriteSheet.src = "assets/flappybirdassets.png";
 
 export const rocketSprite = new Image();
 rocketSprite.src = "assets/missile1.png";
@@ -65,7 +65,7 @@ function animateFlappyOnStartPage(delta) {
     const frame = characterAnimation[frameIndex % totalFrames];
     ctx.drawImage(
         flappyBirdSpriteSheet,
-        146, 173, 56, 22,
+        frame.x, frame.y, frame.w, frame.h,
         (width / scale / 2) - 8, y, frame.w, frame.h
     );
 }
@@ -191,7 +191,7 @@ export function startGameLoop(currentTime) {
 }
 
 export function startGameLoopWaitingForFirstTap(currentTime) {
-    let delta = (currentTime = lastTime) / 1000;
+    let delta = (currentTime - lastTime) / 1000;
     if (delta > 0.1) delta = 0.1;
     lastTime = currentTime;
 
@@ -252,7 +252,7 @@ export function isClickOnStartButton(mouseX, mouseY) {
         mouseX >= (width / scale / 2) - 19 &&
         mouseX <= (width / scale / 2) - 19 + 40 &&
         mouseY >= 150 &&
-        mouseY >= 150 + 14
+        mouseY <= 150 + 14
     );
 };
 
@@ -278,7 +278,7 @@ canvas.addEventListener('click', (e) => {
         toggleLoadoutPage();
         return;
     }
-    if (isClickOnStartButton(mousePos.x, mousePos.y) && !gameRunning && !isShowShopPage && isShowLoadout) {
+    if (isClickOnStartButton(mousePos.x, mousePos.y) && !gameRunning && !isShowShopPage && !isShowLoadout) {
         gameRunning = true;
         toggleScene(gameRunning);
         return;
@@ -294,7 +294,7 @@ canvas.addEventListener('click', (e) => {
     if (isClickOnTopOfSkill(mousePos.x, mousePos.y) && isShowLoadout && !isShowShopPage && !gameRunning && !gameover) {
         return;
     }
-    if (isClickOnDeleteButton(mousePos.x, mousePos.y) && isShowShopPage && !isShowLoadout && !gameRunning && !gameover) {
+    if (isClickOnDeleteButton(mousePos.x, mousePos.y) && !isShowShopPage && isShowLoadout && !gameRunning && !gameover) {
         return;
     }
     if (isClickOnBuyButton(mousePos.x, mousePos.y) && !gameRunning && isShowShopPage && !isShowLoadout && !gameover) {
@@ -320,12 +320,27 @@ canvas.addEventListener('click', (e) => {
 })
 
 canvas.addEventListener("keydown", (e) => {
+    if(gameRunning && !gameover && !isShowLoadout && !isShowShopPage){
+        if(e.code ==="Digit1" || e.code === "Numpad1" || e.key ==="1"){
+            useInGameSlot(0);
+            return;
+        }
+        if(e.code === "Digit2" || e.code ==="Numpad2" || e.key==="2"){
+            useInGameSlot(1);
+            return;
+        }
+        if(e.code === "Digit3" || e.code === "Numpad3" || e.key==="3"){
+            useInGameSlot(2);
+            return;
+        }
+    }
+
     if (e.key === ' ' && gameRunning) {
         if (!firstTapped) {
             firstTapped = true;
             toggleScene(gameRunning);
         }
-        player.velocity_y = upForce;
+        player.velocity_y = -upForce;
         playFlapSound();
     }
 })
