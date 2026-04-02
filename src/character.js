@@ -351,10 +351,6 @@ export function gameLoop(currentTime) {
         showPauseModal();
     }
 
-    if (collidedRocket) {
-        drawRocket(collidedRocket);
-    }
-
     if (gameRunning) {
         if (player.isGravity) {
             gravity = 200;
@@ -432,21 +428,21 @@ export function isClickOnInGameSlot(mouseX, mouseY) {
             if (skill.name === 'Invisibility' && canDeduct) {
                 if (player.isInvisibility) {
                     invisibilityTimer -= 3;
-                    return;
+                    return true;
                 }
                 player.isInvisibility = true;
             }
             if (skill.name === "Gravity" && canDeduct) {
                 if (player.isGravity) {
                     gravityTimer -= 3;
-                    return;
+                    return true;
                 }
                 player.isGravity = true
             }
             if (skill.name === "Invincible" && canDeduct) {
                 if (player.isInvincible) {
                     invincibleTimer -= 5;
-                    return;
+                    return true;
                 }
                 player.isInvincible = true;
             }

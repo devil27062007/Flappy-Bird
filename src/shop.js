@@ -76,7 +76,7 @@ export function setBoughtItemsFromLocalToCode() {
 }
 
 export function deductBoughtItems(item) {
-    if (boughtItems[item] - 1 > -0) {
+    if (boughtItems[item] - 1 >= 0) {
         boughtItems[item]--;
         storeBoughtItemsInLocalStorage();
         return true;

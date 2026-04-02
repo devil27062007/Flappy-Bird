@@ -1,5 +1,5 @@
 import { playDieSound, playFlapSound, playMainTheme } from "./audio.js";
-import { gameLoop, isClickOnGameSlot, player, upForce, resetCollidedRocket, scale, width, resetPlayer, stopGameAnimation, isClickOnInGameSlot } from "./character.js";
+import { gameLoop, player, upForce, resetCollidedRocket, scale, width, resetPlayer, stopGameAnimation, isClickOnInGameSlot } from "./character.js";
 import { drawLoadoutButton, isClickOnDeleteButton, isClickOnTopOfSkill, isClickOnLoadoutButton, isClickOnLoadoutCloseButton, isShowLoadout, showLoadoutPage, toggleLoadoutPage } from "./loadout.js";
 import { isClickOnPauseButton } from "./pause.js";
 import { drawRetryPage, isClickedOnOkButton } from "./retryPage.js";
